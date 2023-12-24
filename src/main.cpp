@@ -6,6 +6,8 @@
 #include "leap/leap.h"
 #include "config.h"
 
+#include "iictest.h"
+
 /**
  * @brief update firmware from sd card file
  * @return true if a update was applied, false otherwise
@@ -73,24 +75,9 @@ void setup()
     printf("CPUID=%08lx\n", SCB->CPUID);
     printf("UID=%08lx %08lx %08lx\n", uid.uniqueID1, uid.uniqueID2, uid.uniqueID3);
 
-    // TODO testing
-    printf("continue flash_protect_enable\n");
-    UI::await_button_press();
+    iic_test_entry();
 
-    // protect bootloader flash region from accidental writes
-    // TODO: flash protect is not working right now...
-    flash_protect_enable();
-
-    // attempt firmware update
-    update_firmware();
-
-    // disable flash protection error interrupt
-    // as it could trigger a unrelated interrupt handler in the application
-    flash_protect_disable_irq();
-
-    // jump to application
-    UI::await_button_press(); // TODO remove this
-    goto_app();
+    NVIC_SystemReset();
 }
 
 void loop() {}
