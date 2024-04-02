@@ -39,10 +39,10 @@ public:
 
 #if IS_SCREEN(SCREEN_NONE)
   #include "./screens/none/NoneScreen.h"
-  const NoneScreen screen = NoneScreen(); 
+  NoneScreen screen = NoneScreen(); 
 #elif IS_SCREEN(SCREEN_DWIN)
   #include "./screens/dwin/DwinScreen.h"
-  const DwinScreen screen = DwinScreen();
+  DwinScreen screen = DwinScreen();
 #else
   #error "Invalid screen driver selected!"
 #endif

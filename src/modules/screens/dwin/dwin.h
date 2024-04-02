@@ -121,6 +121,9 @@ namespace dwin
     uint16_t y;
     uint16_t width;
     uint16_t height;
+
+    uint16_t x_end() const { return x + width; }
+    uint16_t y_end() const { return y + height; }
   };
 
   /**
@@ -151,7 +154,6 @@ namespace dwin
    * @param orientation the orientation to set the screen to
    */
   void set_orientation(const screen_orientation orientation);
-
   
   /**
    * @brief draw a rectangle on the screen

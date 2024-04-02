@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <Arduino.h>
 
 /**
  * @brief serial communication class
@@ -15,9 +16,10 @@ public:
   Serial(M4_USART_TypeDef *peripheral, const uint8_t tx_pin);
 
   /**
-   * @brief initialize the Serial 
+   * @brief initialize the Serial
+   * @param baudrate the baudrate 
    */
-  void init();  
+  void init(uint32_t baudrate);  
 
   /**
    * @brief write a byte to the Serial
@@ -27,9 +29,9 @@ public:
 };
 
 #if defined(HOST_SERIAL) && HOST_SERIAL != -1
-  const Serial hostSerial(CONCAT(M4_USART, HOST_SERIAL), HOST_SERIAL_TX);
+  Serial hostSerial(CONCAT(M4_USART, HOST_SERIAL), HOST_SERIAL_TX);
 #endif
 
 #if defined(SCREEN_SERIAL) && SCREEN_SERIAL != -1
-  const Serial screenSerial(CONCAT(M4_USART, SCREEN_SERIAL), SCREEN_SERIAL_TX);
+  Serial screenSerial(CONCAT(M4_USART, SCREEN_SERIAL), SCREEN_SERIAL_TX);
 #endif
