@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <Arduino.h>
+#include "../util.h"
 
 /**
  * @brief serial communication class

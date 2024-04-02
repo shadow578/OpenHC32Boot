@@ -15,4 +15,8 @@
 #if IS_SCREEN(SCREEN_DWIN)
   #define SCREEN_SERIAL 1
   #define SCREEN_SERIAL_TX PC0
+
+  // DWIN screen orientation
+  // possible values: [ portrait, landscape, portrait_inverted, landscape_inverted]
+  #define SCREEN_ORIENTATION portrait
 #endif

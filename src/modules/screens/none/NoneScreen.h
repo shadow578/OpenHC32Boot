@@ -1,5 +1,5 @@
 #pragma once
-#include "../../screen.h"
+#include "../Screen.h"
 
 /**
  * @brief NONE screen implementation

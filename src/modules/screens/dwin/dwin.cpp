@@ -107,11 +107,11 @@ namespace dwin
     );
   }
 
-  void draw_string(
+  size_t draw_string(
     const char *str,
     const uint16_t x,
     const uint16_t y,
-    const font_size font,
+    const font_size::font_size_t font,
     const color::color color,
     const color::color background,
     const bool draw_background)
@@ -139,6 +139,8 @@ namespace dwin
 
     // send data
     send(data, data_len);
+
+    return str_len;
   }
   
   void move_screen_area(

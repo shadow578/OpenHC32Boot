@@ -1,8 +1,20 @@
 #pragma once
 #include <stdint.h>
+#include <stdio.h>
 
 namespace dwin
-{ 
+{
+  struct rectangle
+  {
+    int x;
+    int y;
+    int width;
+    int height;
+
+    int x_end() const { return x + width; }
+    int y_end() const { return y + height; }
+  };
+
   namespace color
   {
     /**
@@ -31,59 +43,104 @@ namespace dwin
     constexpr color blue = get(0x00, 0x00, 0xff);
   } // namespace color
 
-  enum class font_size : uint8_t
+  namespace font_size 
   {
-    /**
-     * @brief 6x12
-     */
-    pt12 = 0x00,
+    enum font_size_t : uint8_t
+    {
+      /**
+       * @brief 6x12
+       */
+      pt12 = 0x00,
+
+      /**
+       * @brief 8x16
+       */
+      pt16 = 0x01,
+
+      /**
+       * @brief 10x20
+       */
+      pt20 = 0x02,
+
+      /**
+       * @brief 12x24
+       */
+      pt24 = 0x03,
+
+      /**
+       * @brief 14x28
+       */
+      pt28 = 0x04,
+
+      /**
+       * @brief 16x32
+       */
+      pt32 = 0x05,
+
+      /**
+       * @brief 20x40
+       */
+      pt40 = 0x06,
+
+      /**
+       * @brief 24x48
+       */
+      pt48 = 0x07,
+
+      /**
+       * @brief 28x56
+       */
+      pt56 = 0x08,
+
+      /**
+       * @brief 32x64
+       */
+      pt64 = 0x09,
+    };
 
     /**
-     * @brief 8x16
+     * @brief get the width of a character in a font
      */
-    pt16 = 0x01,
+    constexpr uint8_t get_character_width(const font_size_t font)
+    {
+      switch (font)
+      {
+        case pt12: return 6;
+        case pt16: return 8;
+        case pt20: return 10;
+        case pt24: return 12;
+        case pt28: return 14;
+        case pt32: return 16;
+        case pt40: return 20;
+        case pt48: return 24;
+        case pt56: return 28;
+        case pt64: return 32;
+        default: return 0;
+      }
+    }
 
     /**
-     * @brief 10x20
+     * @brief get the height of a character in a font
      */
-    pt20 = 0x02,
+    constexpr uint8_t get_character_height(const font_size_t font)
+    {
+      switch (font)
+      {
+        case pt12: return 12;
+        case pt16: return 16;
+        case pt20: return 20;
+        case pt24: return 24;
+        case pt28: return 28;
+        case pt32: return 32;
+        case pt40: return 40;
+        case pt48: return 48;
+        case pt56: return 56;
+        case pt64: return 64;
+        default: return 0;
+      }
+    }
+  } // namespace font_size
 
-    /**
-     * @brief 12x24
-     */
-    pt24 = 0x03,
-
-    /**
-     * @brief 14x28
-     */
-    pt28 = 0x04,
-
-    /**
-     * @brief 16x32
-     */
-    pt32 = 0x05,
-
-    /**
-     * @brief 20x40
-     */
-    pt40 = 0x06,
-
-    /**
-     * @brief 24x48
-     */
-    pt48 = 0x07,
-
-    /**
-     * @brief 28x56
-     */
-    pt56 = 0x08,
-
-    /**
-     * @brief 32x64
-     */
-    pt64 = 0x09,
-  };
-  
   enum class screen_orientation : uint8_t
   {
     /**
@@ -115,16 +172,25 @@ namespace dwin
     down = 0x03,
   };
 
-  struct rectangle
-  {
-    uint16_t x;
-    uint16_t y;
-    uint16_t width;
-    uint16_t height;
-
-    uint16_t x_end() const { return x + width; }
-    uint16_t y_end() const { return y + height; }
-  };
+  /**
+   * @brief get the screen area for a given orientation
+   * @param orientation the orientation to get the screen area for
+   * @return the screen area
+   */
+  constexpr rectangle get_screen_area(const screen_orientation orientation)
+    {
+      switch (orientation)
+      {
+        case screen_orientation::portrait:
+        case screen_orientation::portrait_inverted:
+          return {0, 0, 240, 320};
+        case screen_orientation::landscape:
+        case screen_orientation::landscape_inverted:
+          return {0, 0, 320, 240};
+        default:
+          return {0, 0, 0, 0};
+      }
+    }
 
   /**
    * @brief initialize the DWIN screen
@@ -175,12 +241,13 @@ namespace dwin
    * @param color the color of the string
    * @param background the background color of the string
    * @param draw_background whether or not to draw the background
+   * @return the number of characters drawn
    */
-  void draw_string(
+  size_t draw_string(
     const char *str,
     const uint16_t x,
     const uint16_t y,
-    const font_size font = font_size::pt16,
+    const font_size::font_size_t font = font_size::pt16,
     const color::color color = color::white,
     const color::color background = color::black,
     const bool draw_background = false);
