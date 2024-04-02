@@ -1,12 +1,18 @@
 #pragma once
-#include "configuration.h"
-#include "boards/board.h"
+#include "config_options.h"
 
-#ifndef BOOTLOADER_VERSION
-#define BOOTLOADER_VERSION "none"
+// host serial port
+// possible values: [ -1, 1, 2, 3, 4 ]
+#define HOST_SERIAL 2
+#define HOST_SERIAL_TX PA9
+#define HOST_SERIAL_BAUD 115200
+
+// screen implementation to use
+// possible values: [ NONE, DWIN ]
+#define SCREEN_DRIVER SCREEN_DWIN
+
+// DWIN screen serial port
+#if IS_SCREEN(SCREEN_DWIN)
+  #define SCREEN_SERIAL 1
+  #define SCREEN_SERIAL_TX PC0
 #endif
-
-/**
- * @brief bootloader welcome message
- */
-#define BOOTLOADER_WELCOME_MESSAGE "OpenHC32Boot " BOOTLOADER_VERSION "\non " BOARD_NAME "\n\n"
