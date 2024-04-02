@@ -38,4 +38,10 @@ namespace flash
    * @return true if the firmware update was successful
    */
   bool apply_firmware_update(FIL &file, const uint32_t app_base_address, const progress_callback progress);
+
+  /**
+   * @brief get the total flash size of the MCU (including bootloader)
+   * @note equal to the largest flash address + 1 
+   */
+  uint32_t get_flash_size();
 } // namespace flash
