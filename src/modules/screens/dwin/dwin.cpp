@@ -18,19 +18,19 @@ namespace dwin
     // send head
     for (uint8_t i = 0; i < sizeof(DWIN_HEAD); i++)
     {
-      screenSerial.write(DWIN_HEAD[i]);
+      screenSerial.put(DWIN_HEAD[i]);
     }
 
     // send data
     for (uint16_t i = 0; i < len; i++)
     {
-      screenSerial.write(data[i]);
+      screenSerial.put(data[i]);
     }
 
     // send tail
     for (uint8_t i = 0; i < sizeof(DWIN_TAIL); i++)
     {
-      screenSerial.write(DWIN_TAIL[i]);
+      screenSerial.put(DWIN_TAIL[i]);
     }
   }
 
