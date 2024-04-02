@@ -27,9 +27,9 @@ public:
 };
 
 #if defined(HOST_SERIAL) && HOST_SERIAL != -1
-  const Serial hostSerial(CONCAT(M4_Usart, HOST_SERIAL), HOST_SERIAL_TX);
+  const Serial hostSerial(CONCAT(M4_USART, HOST_SERIAL), HOST_SERIAL_TX);
 #endif
 
 #if defined(SCREEN_SERIAL) && SCREEN_SERIAL != -1
-  const Serial screenSerial();
+  const Serial screenSerial(CONCAT(M4_USART, SCREEN_SERIAL), SCREEN_SERIAL_TX);
 #endif

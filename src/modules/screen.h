@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include "../config.h"
 
 /**
  * @brief base class for screen implementations 
@@ -36,7 +37,12 @@ public:
   virtual void showProgress(const uint8_t progress) = 0;
 };
 
-/**
- * @brief global screen instance 
- */
-extern const Screen *screen;
+#if IS_SCREEN(SCREEN_NONE)
+  #include "./screens/none/NoneScreen.h"
+  const NoneScreen screen = NoneScreen(); 
+#elif IS_SCREEN(SCREEN_DWIN)
+  #include "./screens/dwin/DwinScreen.h"
+  const DwinScreen screen = DwinScreen();
+#else
+  #error "Invalid screen driver selected!"
+#endif

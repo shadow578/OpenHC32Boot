@@ -1,3 +1,4 @@
 #pragma once
 
-#define CONCAT(a, b) a##b
+#define _CONCAT(a, b) a##b
+#define CONCAT(a, b) _CONCAT(a, b)

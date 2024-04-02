@@ -7,9 +7,7 @@
  */
 class DwinScreen : public Screen
 {
-public:
-  DwinScreen(const Serial *serial);
-  
+public: 
   void init() override;
   void clear() override;
   void write(const char *str) override;
