@@ -20,3 +20,15 @@
   // possible values: [ portrait, landscape, portrait_inverted, landscape_inverted]
   #define SCREEN_ORIENTATION portrait
 #endif
+
+// SDIO pin assignment
+// format: { <D0>, <D1>, <D2>, <D3>, <CLK>, <CMD>, <DET> }
+#define SDIO_PINS { PC8, PC9, PC10, PC11, PC12, PD2, PA10 }
+
+// SDIO Peripheral
+// one of [ 1, 2 ]
+#define SDIO_PERIPHERAL 1
+
+// delete the firmware update file after flashing?
+// possible values: [ 0, 1 ]
+#define DELETE_FIRMEWARE_UPDATE_FILE 1
