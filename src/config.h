@@ -39,3 +39,7 @@
 
 // store last update metadata in flash
 #define STORE_UPDATE_METADATA 1
+
+// hash to include in update metadata
+// possible values: [ NONE, CRC32, SHA256 ]
+#define METADATA_HASH HASH_CRC32

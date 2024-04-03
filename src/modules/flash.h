@@ -1,5 +1,6 @@
 #pragma once
 #include "sd.h"
+#include "hash.h"
 
 namespace flash
 {
@@ -24,8 +25,15 @@ namespace flash
 
   struct update_metadata
   {
+    /**
+     * @brief the size of the application in bytes
+     */
     uint32_t app_size;
-    // TODO: checksum
+    
+    /**
+     * @brief the start address of the application in flash
+     */
+    hash::hash_t hash;
 
     #if STORE_UPDATE_METADATA == 1
 
