@@ -1,6 +1,10 @@
 #pragma once
 #include "config_options.h"
 
+// flash size
+// possible values: [ 256, 512 ]
+#define FLASH_SIZE 256
+
 // host serial port
 // possible values: [ -1, 1, 2, 3, 4 ]
 #define HOST_SERIAL 2
@@ -32,3 +36,6 @@
 // delete the firmware update file after flashing?
 // possible values: [ 0, 1 ]
 #define DELETE_FIRMEWARE_UPDATE_FILE 1
+
+// store last update metadata in flash
+#define STORE_UPDATE_METADATA 1

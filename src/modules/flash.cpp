@@ -45,6 +45,43 @@ namespace flash
   }
 
   /**
+   * @brief write the data to the flash
+   * @param data the data to write
+   * @param start_address the start address to write the data to
+   * @param words_to_write the number of words to write
+   * @return true if the write was successful
+   */
+  bool write(const uint32_t start_address, const uint32_t *data, const uint32_t words_to_write)
+  {
+    // write the buffer to the flash
+    printf("write %ld words @ 0x%08lx\n", words_to_write, start_address);
+    for(uint32_t i = 0, address = start_address; i < words_to_write; i++, address += 4)
+    {
+      en_result_t rc = Ok;
+      if (!dry_run)
+      {
+        rc = EFM_SingleProgramRB(address, data[i]);
+      }
+
+      if (rc != Ok)
+      {
+        printf("EFM_SingleProgramRB() rc=%d\n", rc);
+        return false;
+      }
+    }
+
+    // verify write
+    // printf("verify %ld words @ 0x%08lx\n", words_to_write, start_address);
+    if (std::equal(data, data + words_to_write, reinterpret_cast<uint32_t *>(start_address)))
+    {
+      printf("verify failed\n");
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
    * @brief write the firmware update to the flash
    * @param file firmware binary file to read the update from
    * @param start the start address to write the update to
@@ -53,7 +90,7 @@ namespace flash
    * @return true if the write was successful
    * @note assumes the flash is unlocked
    */
-  bool write(FIL *file, const uint32_t start, const uint32_t end, const progress_callback progress)
+  bool write_file(FIL *file, const uint32_t start, const uint32_t end, const progress_callback progress)
   {
     const DWORD total_bytes = end - start;
     for(DWORD total_bytes_written = 0;;)
@@ -82,33 +119,9 @@ namespace flash
       // prepare start address for this block
       const uint32_t block_address = start + total_bytes_written;
 
-      // EFM_SingleProgram requires a uint32_t buffer, so
-      // convert everything accordingly
-      const uint32_t *buffer32 = reinterpret_cast<uint32_t *>(buffer);
-      const uint32_t words_to_write = bytes_read / 4;
-
-      // write the buffer to the flash
-      printf("write %d bytes @ 0x%08lx\n", bytes_read, block_address);
-      for(uint32_t i = 0, address = block_address; i < words_to_write; i++, address += 4)
+      // write the block to the flash
+      if (!write(block_address, reinterpret_cast<uint32_t *>(buffer), bytes_read / 4))
       {
-        en_result_t rc = Ok;
-        if (!dry_run)
-        {
-          rc = EFM_SingleProgramRB(address, buffer32[i]);
-        }
-
-        if (rc != Ok)
-        {
-          printf("EFM_SingleProgramRB() rc=%d\n", rc);
-          return false;
-        }
-      }
-
-      // verify write
-      // printf("verify %ld bytes @ 0x%08lx\n", bytes_read, block_address);
-      if (std::equal(buffer32, buffer32 + words_to_write, reinterpret_cast<uint32_t *>(block_address)))
-      {
-        printf("verify failed\n");
         return false;
       }
 
@@ -122,14 +135,28 @@ namespace flash
     return true;
   }
 
-  bool apply_firmware_update(FIL &file, const uint32_t app_base_address, const progress_callback progress)
+  bool apply_firmware_update(FIL &file, const uint32_t app_base_address, const update_metadata &metadata, const progress_callback progress)
   {
-    // get size of the file and end address
-    const DWORD file_size = f_size(&file);
-    const uint32_t end_address = app_base_address + file_size;
+    // calculate end addresses
+    const uint32_t program_end_address = app_base_address + metadata.app_size;
+    const uint32_t flash_end_address_real = get_flash_size() - 1;
+    uint32_t flash_end_address = flash_end_address_real;
+
+    // determine how many sectors to erase
+    #if STORE_UPDATE_METADATA == 1
+      // metadata is stored at the end of the flash, so
+      // erase all sectors starting from the app_base_address to the end of the flash
+      const uint32_t erase_end_address = flash_end_address;
+
+      // also, reduce the flash_end_address by the metadata size to avoid overwriting it
+      flash_end_address = update_metadata::get_start_address(flash_end_address_real);
+    #else
+      // erase only the sectors that contain the application
+      const uint32_t erase_end_address = app_base_address;
+    #endif
 
     // ensure the update fits in the flash
-    if (end_address > get_flash_size())
+    if (program_end_address > flash_end_address)
     {
       printf("update too large!\n");
       return false;
@@ -143,19 +170,35 @@ namespace flash
     // disable interrupts while programming flash
     // noInterrupts();
 
+    bool success = true;
+
     // erase the flash
-    if (!erase(app_base_address, end_address, progress))
+    if (!erase(app_base_address, erase_end_address, progress))
     {
       printf("erase failed\n");
-      return false;
+      success = false;
+      goto cleanup; // cannot return directly because of cleanup
     }
 
     // write the firmware update to the flash
-    if (!write(&file, app_base_address, end_address, progress))
+    if (!write_file(&file, app_base_address, program_end_address, progress))
     {
       printf("write failed\n");
-      return false;
+      success = false;
+      goto cleanup; // cannot return directly because of cleanup
     }
+
+    #if STORE_UPDATE_METADATA == 1
+      // write the metadata
+      if (!write(update_metadata::get_start_address(flash_end_address_real), metadata.get_data(), metadata.get_word_count()))
+      {
+        printf("write metadata failed\n");
+        success = false;
+        goto cleanup; // cannot return directly because of cleanup
+      }
+    #endif
+
+    cleanup:
 
     // re-enable interrupts
     // interrupts();
@@ -163,6 +206,6 @@ namespace flash
     // re-lock flash
     EFM_Lock();
 
-    return true;
+    return success;
   }
 } // namespace flash
