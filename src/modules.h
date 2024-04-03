@@ -7,3 +7,4 @@
 #include "modules/sd.h"
 #include "modules/serial.h"
 #include "modules/log.h"
+#include "modules/cpuid.h"

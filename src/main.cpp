@@ -22,7 +22,11 @@ int main()
   screen.init();
 
   // print hello message
-  logging::info("OpenHC32Boot\n");
+  logging::info("OpenHC32Boot " BOOTLOADER_VERSION "\n");
+
+  #if PRINT_CPUID == 1
+    cpuid::print();
+  #endif
 
   // get the firmware file
   logging::info("checking ");

@@ -56,3 +56,6 @@
 // logging level
 // possible values: [ DEBUG, INFO, ERROR, OFF ]
 #define LOG_LEVEL LOG_LEVEL_DEBUG
+
+// print the CPUID information
+#define PRINT_CPUID 1
