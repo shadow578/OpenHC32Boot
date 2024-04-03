@@ -22,16 +22,16 @@ int main()
   screen.init();
 
   // print hello message
-  logging::info("OpenHC32Boot " BOOTLOADER_VERSION "\n");
+  logging::log("OpenHC32Boot " BOOTLOADER_VERSION "\n");
 
   #if PRINT_CPUID == 1
     cpuid::print();
   #endif
 
   // get the firmware file
-  logging::info("checking ");
-  logging::info(FIRMWARE_UPDATE_FILE);
-  logging::info("\n");
+  logging::log("checking ");
+  logging::log(FIRMWARE_UPDATE_FILE);
+  logging::log("\n");
   
   FIL file;
   flash::update_metadata metadata;
@@ -44,7 +44,7 @@ int main()
     }
     else
     {
-      logging::info("update applied\n");
+      logging::log("update applied\n");
     }
 
     // close the file
@@ -52,8 +52,8 @@ int main()
   }
 
   // jump to the application
-  logging::info("jumping to app @ ");
-  logging::info(APP_BASE_ADDRESS, 16);
-  logging::info("\n");
+  logging::log("jumping to app @ ");
+  logging::log(APP_BASE_ADDRESS, 16);
+  logging::log("\n");
   leap::jump(APP_BASE_ADDRESS);
 }
