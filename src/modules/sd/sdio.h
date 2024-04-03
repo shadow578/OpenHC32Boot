@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 #include "../../util.h"
 #include "../../config.h"
 
@@ -7,13 +6,13 @@ namespace sdio
 {
   struct pins_t
   {
-    gpio_pin_t d0;
-    gpio_pin_t d1;
-    gpio_pin_t d2;
-    gpio_pin_t d3;
-    gpio_pin_t clk;
-    gpio_pin_t cmd;
-    gpio_pin_t det;
+    pins::pin_t d0;
+    pins::pin_t d1;
+    pins::pin_t d2;
+    pins::pin_t d3;
+    pins::pin_t clk;
+    pins::pin_t cmd;
+    pins::pin_t det;
   };
   
   /**

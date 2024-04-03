@@ -1,8 +1,7 @@
-#include <Arduino.h>
+#include <hc32_ddl.h>
 
-void setup()
+int main()
 {
 
 }
 
-void loop() { }

@@ -1,6 +1,6 @@
 #include "leap.h"
 #include <startup/startup.h>
-#include <Arduino.h>
+#include <hc32_ddl.h>
 
 namespace leap
 {
@@ -17,11 +17,11 @@ namespace leap
     }
 
     // update stack pointer and VTOR
-    noInterrupts();
+    __disable_irq();
     __set_MSP(reinterpret_cast<uint32_t>(app_vector_table->stackTop));
     SCB->VTOR = app_base_address;
     __DSB();
-    interrupts();
+    __enable_irq();
 
     // jump to the application
     app_vector_table->reset();

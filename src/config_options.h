@@ -1,5 +1,8 @@
 #pragma once
-#include <WVariant.h>
+
+#ifdef __cplusplus
+  #include "pins.h"
+#endif
 
 //
 // Screen drivers

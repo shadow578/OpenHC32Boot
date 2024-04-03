@@ -1,6 +1,7 @@
 #pragma once
 #include "sd.h"
 #include "hash.h"
+#include <algorithm>
 
 namespace flash
 {

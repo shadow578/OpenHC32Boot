@@ -1,6 +1,8 @@
 #include "../hash.h"
-#if METADATA_HASH == HASH_SHA256
 
+#if METADATA_HASH == HASH_SHA256
+  #include "../../util.h"
+  #include <algorithm>
   #include <hc32_ddl.h> 
   // note: not using HASH DDL since it doesn't support pushing data in multiple chunks
 
@@ -92,7 +94,7 @@
       uint32_t remaining_bytes = len;
       while(remaining_bytes > 0)
       {
-        uint32_t push_len = min(remaining_bytes, HASH_GROUP_LEN);
+        uint32_t push_len = minimum(remaining_bytes, HASH_GROUP_LEN);
         push_block(data, push_len, scratch);
 
         data += HASH_GROUP_LEN;

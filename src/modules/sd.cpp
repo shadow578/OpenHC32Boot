@@ -1,5 +1,6 @@
 #include "sd.h"
 #include "../config.h"
+#include <cstdio>
 
 namespace sd 
 {

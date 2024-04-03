@@ -1,5 +1,7 @@
 #include "dwin.h"
 #include "../../serial.h"
+#include "../../../util.h"
+#include <algorithm>
 
 extern Serial screenSerial;
 
@@ -129,7 +131,7 @@ namespace dwin
 
     // calculate buffer size
     // limited to a total buffer size of 64 bytes
-    const size_t str_len = min(strlen(str), 64 - sizeof(cmd_data));
+    const size_t str_len = minimum(strlen(str), 64 - sizeof(cmd_data));
 
     // create buffer and copy data over
     const size_t data_len = sizeof(cmd_data) + str_len;

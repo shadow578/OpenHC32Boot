@@ -1,6 +1,6 @@
 #include "sdio.h"
 #include <sd_card.h>
-#include <drivers/gpio/gpio.h>
+#include <cstdio>
 
 #include "fatfs/ff.h"
 #include "fatfs/diskio.h"
@@ -23,16 +23,16 @@ extern "C" DSTATUS disk_initialize(BYTE pdrv)
   // stc_port_init_t clockPinInit = {
   //  .enPinDrv = Pin_Drv_M,
   // };
-  // GPIO_Init(sdio::pins.clk, &clockPinInit);
+  // PORT_Init(sdio::pins.clk.port, sdio::pins.clk.pin, &clockPinInit);
   
   // configure SDIO pins
-  GPIO_SetFunc(sdio::pins.d0, Func_Sdio);
-  GPIO_SetFunc(sdio::pins.d1, Func_Sdio);
-  GPIO_SetFunc(sdio::pins.d2, Func_Sdio);
-  GPIO_SetFunc(sdio::pins.d3, Func_Sdio);
-  GPIO_SetFunc(sdio::pins.clk, Func_Sdio);
-  GPIO_SetFunc(sdio::pins.cmd, Func_Sdio);
-  GPIO_SetFunc(sdio::pins.det, Func_Sdio);
+  PORT_SetFunc(sdio::pins.d0.port, sdio::pins.d0.pin, Func_Sdio, Disable);
+  PORT_SetFunc(sdio::pins.d1.port, sdio::pins.d1.pin, Func_Sdio, Disable);
+  PORT_SetFunc(sdio::pins.d2.port, sdio::pins.d2.pin, Func_Sdio, Disable);
+  PORT_SetFunc(sdio::pins.d3.port, sdio::pins.d3.pin, Func_Sdio, Disable);
+  PORT_SetFunc(sdio::pins.clk.port, sdio::pins.clk.pin, Func_Sdio, Disable);
+  PORT_SetFunc(sdio::pins.cmd.port, sdio::pins.cmd.pin, Func_Sdio, Disable);
+  PORT_SetFunc(sdio::pins.det.port, sdio::pins.det.pin, Func_Sdio, Disable);
 
   // If a handle is already initialized, free it before creating a new one
   // otherwise, we will leak memory, which will eventually crash the system

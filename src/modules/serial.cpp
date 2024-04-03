@@ -1,5 +1,4 @@
 #include "serial.h"
-#include <drivers/usart/usart_sync.h>
 
 void Serial::init(uint32_t baudrate)
 {
@@ -15,15 +14,15 @@ void Serial::init(uint32_t baudrate)
     .enHwFlow = UsartRtsEnable,            // RTS enabled
   };
 
-  usart_sync_init(peripheral, tx_pin, baudrate, &usart_config);
+  //usart_sync_init(peripheral, tx_pin, baudrate, &usart_config);
 }
 
 void Serial::put(const uint8_t ch)
 {
-  usart_sync_putc(peripheral, ch);
+  //usart_sync_putc(peripheral, ch);
 }
 
 void Serial::write(const char *str)
 {
-  usart_sync_write(peripheral, str);
+  //usart_sync_write(peripheral, str);
 }
