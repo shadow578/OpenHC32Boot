@@ -3,7 +3,7 @@
 
 #if IS_SCREEN(SCREEN_NONE)
   #include "./screens/none/NoneScreen.h"
-  NoneScreen screen(); 
+  NoneScreen screen; 
 #elif IS_SCREEN(SCREEN_DWIN)
   #include "./screens/dwin/DwinScreen.h"
   DwinScreen screen;

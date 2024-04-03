@@ -13,11 +13,6 @@ namespace flash
   constexpr uint32_t erase_sector_size = 8192; // 8Kb
   constexpr uint32_t file_buffer_size = 512;   // 512 bytes
 
-  /**
-   * @brief buffer used for reading from the firmware update file
-   */
-  BYTE buffer[file_buffer_size];
-
   enum class update_stage
   {
     erase,

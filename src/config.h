@@ -43,3 +43,12 @@
 // hash to include in update metadata
 // possible values: [ NONE, CRC32, SHA256 ]
 #define METADATA_HASH HASH_SHA256
+
+// path of the firmware update file
+#define FIRMWARE_UPDATE_FILE "update.bin"
+
+// base address of the application
+#define APP_BASE_ADDRESS 0xC000ul
+
+// enable fault handler
+#define ENABLE_FAULT_HANDLER 1

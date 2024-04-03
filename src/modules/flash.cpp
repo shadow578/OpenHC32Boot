@@ -5,6 +5,11 @@
 namespace flash
 {
   /**
+   * @brief buffer used for reading from the firmware update file
+   */
+  BYTE buffer[file_buffer_size];
+
+  /**
    * @brief erase the flash sectors in the given range
    * @param start the start address to erase
    * @param end the end address to erase
