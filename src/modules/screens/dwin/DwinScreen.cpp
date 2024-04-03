@@ -14,7 +14,7 @@ void DwinScreen::init()
 {
   dwin::init();
 
-  dwin::screen_orientation orientation = dwin::screen_orientation::portrait; // TODO: CONCAT(dwin::screen_orientation::, SCREEN_ORIENTATION);
+  dwin::screen_orientation orientation = dwin::screen_orientation:: SCREEN_ORIENTATION;
   dwin::set_orientation(orientation);
 
   clear();
