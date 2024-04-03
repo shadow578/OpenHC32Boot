@@ -22,14 +22,10 @@ int main()
   // get the firmware file
   printf("checking %s\n", FIRMWARE_UPDATE_FILE);
   FIL file;
-  if (sd::get_update_file(file, FIRMWARE_UPDATE_FILE))
+  flash::update_metadata metadata;
+  if (sd::get_update_file(file, metadata, FIRMWARE_UPDATE_FILE))
   {
-    // got the file, get metadata then flash
-    flash::update_metadata metadata = {
-      .app_size = f_size(&file),
-      //TODO .hash = 
-    };
-
+    // got the file, apply the update
     if(!flash::apply_firmware_update(file, APP_BASE_ADDRESS, metadata, &on_progress))
     {
       printf("update failed\n");

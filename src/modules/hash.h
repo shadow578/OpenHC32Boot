@@ -1,6 +1,6 @@
 #pragma once
 #include <stdint.h>
-#include "sd.h"
+#include "sd/fatfs/ff.h"
 #include "../config.h"
 
 namespace hash
