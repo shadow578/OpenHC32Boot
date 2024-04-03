@@ -1,6 +1,7 @@
 #include "flash.h"
 #include <cstdio>
 #include <hc32_ddl.h>
+#include "log.h"
 
 namespace flash
 {
@@ -31,7 +32,11 @@ namespace flash
     {
       // erase sector
       const uint32_t sector_address = sector * erase_sector_size;
-      printf("erase sector %ld @0x%08lx\n", sector, sector_address);
+      logging::debug("erase sector ");
+      logging::debug(sector, 10);
+      logging::debug(" @ 0x");
+      logging::debug(sector_address, 16);
+      logging::debug("\n");
 
       en_result_t rc = Ok;
       if (!dry_run)
@@ -61,7 +66,12 @@ namespace flash
   bool write(const uint32_t start_address, const uint32_t *data, const uint32_t words_to_write)
   {
     // write the buffer to the flash
-    printf("write %ld words @ 0x%08lx\n", words_to_write, start_address);
+    logging::debug("write ");
+    logging::debug(words_to_write, 10);
+    logging::debug(" words @ 0x");
+    logging::debug(start_address, 16);
+    logging::debug("\n");
+
     for(uint32_t i = 0, address = start_address; i < words_to_write; i++, address += 4)
     {
       en_result_t rc = Ok;
@@ -72,16 +82,22 @@ namespace flash
 
       if (rc != Ok)
       {
-        printf("EFM_SingleProgramRB() rc=%d\n", rc);
+        logging::error("EFM_SingleProgramRB() err=");
+        logging::error(rc, 10);
+        logging::error("\n");
         return false;
       }
     }
 
     // verify write
-    // printf("verify %ld words @ 0x%08lx\n", words_to_write, start_address);
-    if (std::equal(data, data + words_to_write, reinterpret_cast<uint32_t *>(start_address)))
+    // logging::debug("verify ");
+    // logging::debug(words_to_write, 10);
+    // logging::debug(" words @ 0x");
+    // logging::debug(start_address, 16);
+    // logging::debug("\n");
+    if (!std::equal(data, data + words_to_write, reinterpret_cast<uint32_t *>(start_address)))
     {
-      printf("verify failed\n");
+      logging::debug("verify failed\n");
       return false;
     }
 
@@ -107,7 +123,9 @@ namespace flash
       const FRESULT res = f_read(file, buffer, file_buffer_size, &bytes_read);
       if (res != FR_OK)
       {
-        printf("f_read() failed: %d\n", res);
+        logging::error("f_read() err=");
+        logging::error(res, 10);
+        logging::error("\n");
         return false;
       }
 
@@ -165,7 +183,7 @@ namespace flash
     // ensure the update fits in the flash
     if (program_end_address > flash_end_address)
     {
-      printf("update too large!\n");
+      logging::error("update too large\n");
       return false;
     }
 
@@ -182,7 +200,7 @@ namespace flash
     // erase the flash
     if (!erase(app_base_address, erase_end_address, progress))
     {
-      printf("erase failed\n");
+      logging::error("erase failed\n");
       success = false;
       goto cleanup; // cannot return directly because of cleanup
     }
@@ -190,7 +208,7 @@ namespace flash
     // write the firmware update to the flash
     if (!write_file(&file, app_base_address, program_end_address, progress))
     {
-      printf("write failed\n");
+      logging::error("write failed\n");
       success = false;
       goto cleanup; // cannot return directly because of cleanup
     }
@@ -199,7 +217,7 @@ namespace flash
       // write the metadata
       if (!write(update_metadata::get_start_address(flash_end_address_real), metadata.get_data(), metadata.get_word_count()))
       {
-        printf("write metadata failed\n");
+        logging::error("write metadata failed\n");
         success = false;
         goto cleanup; // cannot return directly because of cleanup
       }

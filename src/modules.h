@@ -6,3 +6,4 @@
 #include "modules/screen.h"
 #include "modules/sd.h"
 #include "modules/serial.h"
+#include "modules/log.h"

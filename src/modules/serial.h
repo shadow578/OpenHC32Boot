@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <hc32_ddl.h>
+#include "../config.h"
 #include "../util.h"
 #include "../pins.h"
 
@@ -41,9 +42,9 @@ private:
 };
 
 #if defined(HOST_SERIAL) && HOST_SERIAL != -1
-  Serial hostSerial(CONCAT(M4_USART, HOST_SERIAL), HOST_SERIAL_TX);
+  extern Serial hostSerial;
 #endif
 
 #if defined(SCREEN_SERIAL) && SCREEN_SERIAL != -1
-  Serial screenSerial(CONCAT(M4_USART, SCREEN_SERIAL), SCREEN_SERIAL_TX);
+  extern Serial screenSerial;
 #endif

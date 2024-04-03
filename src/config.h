@@ -52,3 +52,7 @@
 
 // enable fault handler
 #define ENABLE_FAULT_HANDLER 1
+
+// logging level
+// possible values: [ DEBUG, INFO, ERROR, OFF ]
+#define LOG_LEVEL LOG_LEVEL_DEBUG

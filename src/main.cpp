@@ -4,7 +4,12 @@
 
 void on_progress(const flash::update_stage stage, const int done, const int total)
 {
-  printf("%s : %d of %d", stage == flash::update_stage::erase ? "erase" : "write", done, total);
+  logging::info(stage == flash::update_stage::erase ? "erase" : "write");
+  logging::info(": ");
+  logging::info(done, 10);
+  logging::info(" of ");
+  logging::info(total, 10);
+  logging::info("\n");
   screen.showProgress((done * 100) / total);
   screen.flush();
 }
@@ -17,10 +22,13 @@ int main()
   screen.init();
 
   // print hello message
-  printf("OpenHC32Boot\n");
+  logging::info("OpenHC32Boot\n");
 
   // get the firmware file
-  printf("checking %s\n", FIRMWARE_UPDATE_FILE);
+  logging::info("checking ");
+  logging::info(FIRMWARE_UPDATE_FILE);
+  logging::info("\n");
+  
   FIL file;
   flash::update_metadata metadata;
   if (sd::get_update_file(file, metadata, FIRMWARE_UPDATE_FILE))
@@ -28,11 +36,11 @@ int main()
     // got the file, apply the update
     if(!flash::apply_firmware_update(file, APP_BASE_ADDRESS, metadata, &on_progress))
     {
-      printf("update failed\n");
+      logging::error("update failed\n");
     }
     else
     {
-      printf("update applied\n");
+      logging::info("update applied\n");
     }
 
     // close the file
@@ -40,6 +48,8 @@ int main()
   }
 
   // jump to the application
-  printf("jump to %08lx\n", APP_BASE_ADDRESS);
+  logging::info("jumping to app @ ");
+  logging::info(APP_BASE_ADDRESS, 16);
+  logging::info("\n");
   leap::jump(APP_BASE_ADDRESS);
 }

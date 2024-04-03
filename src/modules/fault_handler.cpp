@@ -13,14 +13,9 @@
  */
 #include <hc32_ddl.h>
 #include <cstdio>
+#include "log.h"
 
-#define panic_begin()
-#define panic_printf(msg, ...) printf(msg, ##__VA_ARGS__)
-#define panic_end()                     \
-    {                                   \
-    __BKPT(0);                          \
-    __NVIC_SystemReset();               \
-    }
+#define LOG_REGISTER(message, register) logging::log(message "0x"); logging::log(register, 16); logging::log("\n");
 
 typedef union hardfault_stack_frame_t
 {
@@ -51,14 +46,14 @@ void fault_handler::init()
  */
 void print_stack_frame(hardfault_stack_frame_t *stack_frame)
 {
-    panic_printf("R0 = 0x%08lx\n", stack_frame->r0);
-    panic_printf("R1 = 0x%08lx\n", stack_frame->r1);
-    panic_printf("R2 = 0x%08lx\n", stack_frame->r2);
-    panic_printf("R3 = 0x%08lx\n", stack_frame->r3);
-    panic_printf("R12 = 0x%08lx\n", stack_frame->r12);
-    panic_printf("LR = 0x%08lx\n", stack_frame->lr);
-    panic_printf("PC = 0x%08lx\n", stack_frame->pc);
-    panic_printf("PSR = 0x%08lx\n", stack_frame->psr);
+    LOG_REGISTER("R0 = ", stack_frame->r0);
+    LOG_REGISTER("R1 = ", stack_frame->r1);
+    LOG_REGISTER("R2 = ", stack_frame->r2);
+    LOG_REGISTER("R3 = ", stack_frame->r3);
+    LOG_REGISTER("R12 = ", stack_frame->r12);
+    LOG_REGISTER("LR = ", stack_frame->lr);
+    LOG_REGISTER("PC = ", stack_frame->pc);
+    LOG_REGISTER("PSR = ", stack_frame->psr);
 }
 
 /**
@@ -66,44 +61,42 @@ void print_stack_frame(hardfault_stack_frame_t *stack_frame)
  */
 extern "C" void HardFault_Handler_C(hardfault_stack_frame_t *stack_frame, uint32_t lr_value)
 {
-    // prepare panic message formatting
-    panic_begin();
-
     // print panic message:
     // - header
-    panic_printf("\n\n*** HARDFAULT ***\n");
+    logging::log("\n\n*** HARDFAULT ***\n");
 
     // - fault status registers
-    panic_printf("- FSR / FAR:\n");
-    panic_printf("SCB->HFSR = 0x%08lx\n", SCB->HFSR);
-    panic_printf("SCB->CFSR = 0x%08lx\n", SCB->CFSR);
-    panic_printf("SCB->DFSR = 0x%08lx\n", SCB->DFSR);
-    panic_printf("SCB->AFSR = 0x%08lx\n", SCB->AFSR);
+    logging::log("- FSR / FAR:\n");
+    LOG_REGISTER("SCB->HFSR = ", SCB->HFSR);
+    LOG_REGISTER("SCB->CFSR = ", SCB->CFSR);
+    LOG_REGISTER("SCB->DFSR = ", SCB->DFSR);
+    LOG_REGISTER("SCB->AFSR = ", SCB->AFSR);
 
     if ((SCB->CFSR & SCB_CFSR_MMARVALID_Msk) != 0)
     {
-        panic_printf("SCB->MMFAR = 0x%08lx\n", SCB->MMFAR);
+        LOG_REGISTER("SCB->MMFAR = ", SCB->MMFAR);
     }
 
     if ((SCB->CFSR & SCB_CFSR_BFARVALID_Msk) != 0)
     {
-        panic_printf("SCB->BFAR = 0x%08lx\n", SCB->BFAR);
+        LOG_REGISTER("SCB->BFAR = ", SCB->BFAR);
     }
 
     // - stack frame
-    panic_printf("- Stack frame:\n");
+    logging::log("- Stack frame:\n");
     print_stack_frame(stack_frame);
 
     // - misc
     //  * LR value
-    panic_printf("- Misc:\n");
-    panic_printf("LR = 0x%08lx\n", lr_value);
+    logging::log("- Misc:\n");
+    LOG_REGISTER("LR = \n", lr_value);
 
     // - footer
-    panic_printf("***\n\n");
+    logging::log("***\n\n");
 
     // end panic message and halt
-    panic_end();
+    __BKPT(0);
+    __NVIC_SystemReset();
 }
 
 /**

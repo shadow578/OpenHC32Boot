@@ -1,4 +1,5 @@
 #include "sdio.h"
+#include "../log.h"
 #include <sd_card.h>
 #include <cstdio>
 
@@ -62,7 +63,9 @@ extern "C" DSTATUS disk_initialize(BYTE pdrv)
   en_result_t rc = SDCARD_Init(handle, cardConf);
   if (rc != Ok) 
   {
-    printf("SDIO_Init() error (rc=%u)\n", rc);
+    logging::debug("SDIO_Init() rc=");
+    logging::debug(rc, 10);
+    logging::debug("\n");
     return STA_NOINIT;
   }
 
@@ -70,7 +73,9 @@ extern "C" DSTATUS disk_initialize(BYTE pdrv)
   rc = SDCARD_GetCardCSD(handle);
   if (rc != Ok)
   {
-    printf("SDIO_GetCardCSD() error (rc=%u)\n", rc);
+    logging::debug("SDIO_GetCardCSD() rc=");
+    logging::debug(rc, 10);
+    logging::debug("\n");
     return STA_NOINIT;
   }
 
@@ -127,7 +132,13 @@ extern "C" DRESULT disk_read(BYTE pdrv, BYTE *buff, LBA_t sector, UINT count)
   en_result_t rc = SDCARD_ReadBlocks(handle, sector, count, buff, sdio::read_timeout);
   if (rc != Ok)
   {
-    printf("sd read fail (rc=%u; err=%lu; @%lu)\n", rc, handle->u32ErrorCode, sector);
+    logging::debug("SDCARD_ReadBlocks() rc=");
+    logging::debug(rc, 10);
+    logging::debug(" err=");
+    logging::debug(handle->u32ErrorCode, 10);
+    logging::debug(" @ ");
+    logging::debug(sector, 10);
+    logging::debug("\n");
     return RES_ERROR;
   }
 
@@ -160,7 +171,13 @@ extern "C" DRESULT disk_write(BYTE pdrv, const BYTE *buff, LBA_t sector, UINT co
   }
   else
   {
-    printf("sd write fail (rc=%u; err=%lu; @%lu)\n", rc, handle->u32ErrorCode, sector);
+    logging::debug("SDCARD_WriteBlocks() rc=");
+    logging::debug(rc, 10);
+    logging::debug(" err=");
+    logging::debug(handle->u32ErrorCode, 10);
+    logging::debug(" @ ");
+    logging::debug(sector, 10);
+    logging::debug("\n");
     return RES_ERROR;
   }
 }
@@ -207,7 +224,9 @@ extern "C" DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buff)
   //  return RES_OK;
   default:
     // unknown command
-    printf("unknown ioctl command %u\n", cmd);
+    logging::debug("unknown ioctl command ");
+    logging::debug(cmd, 10);
+    logging::debug("\n");
     return RES_PARERR;
   }
 }

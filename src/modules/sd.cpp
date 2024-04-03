@@ -1,4 +1,5 @@
 #include "sd.h"
+#include "log.h"
 #include "../config.h"
 #include <cstdio>
 
@@ -18,7 +19,7 @@ namespace sd
       // start hash session
       if (!hash::start())
       {
-        printf("hash::start() failed\n");
+        logging::error("hash::start() failed\n");
         return false;
       }
 
@@ -32,7 +33,9 @@ namespace sd
         const FRESULT res = f_read(file, buffer, buffer_size, &bytes_read);
         if (res != FR_OK)
         {
-          printf("f_read() failed: %d\n", res);
+          logging::error("f_read() err=");
+          logging::error(res, 10);
+          logging::error("\n");
           return false;
         }
 
@@ -45,7 +48,7 @@ namespace sd
         // write bytes to hash
         if (!hash::push_data(buffer, bytes_read))
         {
-          printf("hash::push_data() failed\n");
+          logging::error("hash::push_data() failed\n");
           return false;
         }
       }
@@ -53,7 +56,7 @@ namespace sd
       // get the hash
       if (!hash::get_hash(metadata.hash))
       {
-        printf("hash::get_hash() failed\n");
+        logging::error("hash::get_hash() failed\n");
         return false;
       }
     #endif // METADATA_HASH != HASH_NONE
@@ -67,7 +70,9 @@ namespace sd
     FRESULT res = f_mount(&fs, "", /* mount now */ 1);
     if (res != FR_OK)
     {
-      printf("f_mount() failed: %d\n", res);
+      logging::error("f_mount() err=");
+      logging::error(res, 10);
+      logging::error("\n");
       return false;
     }
 
@@ -75,7 +80,9 @@ namespace sd
     res = f_open(&file, path, FA_READ);
     if (res != FR_OK)
     {
-      printf("f_open() failed: %d\n", res);
+      logging::error("f_open() err=");
+      logging::error(res, 10);
+      logging::error("\n");
       return false;
     }
 
@@ -96,7 +103,10 @@ namespace sd
     FRESULT res = f_close(&file);
     if (res != FR_OK)
     {
-      printf("f_close() failed: %d\n", res);
+      logging::error("f_close() err=");
+      logging::error(res, 10);
+      logging::error("\n");
+
       // don't care for error here
     }
 
@@ -104,7 +114,10 @@ namespace sd
       res = f_unlink(path);
       if (res != FR_OK)
       {
-        printf("f_unlink() failed: %d\n", res);
+        logging::error("f_unlink() err=");
+        logging::error(res, 10);
+        logging::error("\n");
+
         // don't care for error here
       }
     #endif
@@ -113,7 +126,10 @@ namespace sd
     res = f_unmount("");
     if (res != FR_OK)
     {
-      printf("f_unmount() failed: %d\n", res);
+      logging::error("f_unmount() err=");
+      logging::error(res, 10);
+      logging::error("\n");
+
       // don't care for error here
     }
   }
