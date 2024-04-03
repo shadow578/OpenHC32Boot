@@ -26,6 +26,8 @@ namespace hash
    * @param data the data to push
    * @param len the length of the data
    * @return true if the data was successfully pushed
+   * 
+   * @note on SHA256, data length must be a multiple of 64 bytes, except for the last push
    */
   bool push_data(const uint8_t *data, const uint32_t len);
 

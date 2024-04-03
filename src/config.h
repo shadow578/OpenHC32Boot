@@ -42,4 +42,4 @@
 
 // hash to include in update metadata
 // possible values: [ NONE, CRC32, SHA256 ]
-#define METADATA_HASH HASH_CRC32
+#define METADATA_HASH HASH_SHA256
