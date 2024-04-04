@@ -146,22 +146,22 @@ namespace dwin
     /**
      * @brief 0 degrees
      */
-    portrait = 0x00,
+    landscape = 0x00,
 
     /**
      * @brief 90 degrees
      */
-    landscape = 0x01,
+    portrait = 0x01,
 
     /**
      * @brief 180 degrees
      */
-    portrait_inverted = 0x02,
+    landscape_inverted = 0x02,
 
     /**
      * @brief 270 degrees
      */
-    landscape_inverted = 0x03,
+    portrait_inverted = 0x03,
   };
 
   enum class screen_area_shift_dir : uint8_t
