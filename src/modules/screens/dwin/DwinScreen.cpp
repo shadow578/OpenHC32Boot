@@ -8,6 +8,7 @@ constexpr uint8_t font_height = dwin::font_size::get_character_height(font_size)
 constexpr uint8_t font_width = dwin::font_size::get_character_width(font_size);
 
 constexpr int progress_bar_height = font_height * 2;
+constexpr int progress_bar_padding_top = font_height;
 constexpr dwin::color::color progress_bar_color = dwin::color::green;
 constexpr dwin::color::color progress_bar_background_color = dwin::color::black;
 constexpr dwin::color::color progress_bar_outline_color = dwin::color::white;
@@ -23,8 +24,8 @@ void DwinScreen::init()
   flush();
 
   const dwin::rectangle screen_area = dwin::get_screen_area(orientation);
-  text_area = {0, 0, screen_area.width, screen_area.height - progress_bar_height};
-  progress_bar_area = {0, screen_area.height - progress_bar_height, screen_area.width, progress_bar_height - 1}; // -1 to avoid screen overflow
+  text_area = {0, 0, screen_area.width, screen_area.height - progress_bar_height - progress_bar_padding_top};
+  progress_bar_area = {0, screen_area.height - progress_bar_height, screen_area.width, progress_bar_height - 1}; // -1 to avoid screen wrap-around
 }
 
 void DwinScreen::clear()
