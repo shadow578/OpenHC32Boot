@@ -18,8 +18,11 @@ void on_progress(const flash::update_stage stage, const int done, const int tota
 
 int main()
 {
-  // initialize modules
+  // initialize system
   fault_handler::init();
+  sysclock::apply();
+  
+  // initialize serial and ui
   hostSerial.init(HOST_SERIAL_BAUD);
   screen.init();
 
