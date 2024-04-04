@@ -5,6 +5,11 @@
 #endif
 
 //
+// Serial Ports
+//
+#define HAS_SERIAL(port) (port != 0 && port != -1)
+
+//
 // Screen drivers
 //
 #define SCREEN_NONE 0
