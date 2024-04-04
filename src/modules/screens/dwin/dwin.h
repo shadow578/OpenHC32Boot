@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <stdio.h>
+#include "../../../config.h"
 
 namespace dwin
 {
@@ -178,19 +179,21 @@ namespace dwin
    * @return the screen area
    */
   constexpr rectangle get_screen_area(const screen_orientation orientation)
+  {
+    constexpr struct { int width; int height; } dimensions = SCREEN_DIMENSIONS;
+
+    switch (orientation)
     {
-      switch (orientation)
-      {
-        case screen_orientation::portrait:
-        case screen_orientation::portrait_inverted:
-          return {0, 0, 240, 320};
-        case screen_orientation::landscape:
-        case screen_orientation::landscape_inverted:
-          return {0, 0, 320, 240};
-        default:
-          return {0, 0, 0, 0};
-      }
+      case screen_orientation::portrait:
+      case screen_orientation::portrait_inverted:
+        return {0, 0, dimensions.width, dimensions.height};
+      case screen_orientation::landscape:
+      case screen_orientation::landscape_inverted:
+        return {0, 0, dimensions.height, dimensions.width};
+      default:
+        return {0, 0, 0, 0};
     }
+  }
 
   /**
    * @brief initialize the DWIN screen

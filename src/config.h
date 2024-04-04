@@ -19,6 +19,10 @@
   // DWIN screen orientation
   // possible values: [ portrait, landscape, portrait_inverted, landscape_inverted]
   #define SCREEN_ORIENTATION portrait
+
+  // DWIM screen dimensions
+  // format: { <width>, <height> }
+  #define SCREEN_DIMENSIONS { 272, 480 }
 #endif
 
 // SDIO pin assignment
