@@ -5,6 +5,8 @@
 
 namespace sd 
 {
+  #define HAS_METADATA_HASH (METADATA_HASH != HASH_NONE)
+
   /**
    * @brief FatFS file system object
    */
@@ -15,7 +17,7 @@ namespace sd
     // get file size
     metadata.app_size = f_size(file);
 
-    #if METADATA_HASH != HASH_NONE
+    #if HAS_METADATA_HASH
       // start hash session
       if (!hash::start())
       {
@@ -59,7 +61,7 @@ namespace sd
         logging::error("hash::get_hash() failed\n");
         return false;
       }
-    #endif // METADATA_HASH != HASH_NONE
+    #endif // HAS_METADATA_HASH
 
     return true;
   }
@@ -76,25 +78,50 @@ namespace sd
       return false;
     }
 
-    // try to open the file
-    res = f_open(&file, path, FA_READ);
-    if (res != FR_OK)
+    bool read_metadata = false;
+    for(;;)
     {
-      logging::error("f_open() err=");
-      logging::error(res, 10);
-      logging::error("\n");
-      return false;
-    }
+      // try to open the file
+      res = f_open(&file, path, FA_READ);
+      if (res != FR_OK)
+      {
+        logging::error("f_open() err=");
+        logging::error(res, 10);
+        logging::error("\n");
+        return false;
+      }
 
-    // assume everything is ok
-    // if the file is more than 0 bytes
-    if (f_size(&file) <= 0)
-    {
-      return false;
-    }
+      // assume everything is ok
+      // if the file is more than 0 bytes
+      const DWORD file_size = f_size(&file);
+      if (file_size <= 0)
+      {
+        return false;
+      }
 
-    // get metadata
-    return get_metadata(&file, metadata);
+      // get metadata
+      if (!read_metadata)
+      {
+        if (!get_metadata(&file, metadata)) 
+        {
+          return false;
+        }
+        
+        #if HAS_METADATA_HASH
+          // open file again, but don't read metadata
+          // this is (more or less) equal to f_rewind(), but 
+          // with reduced memory usage
+          f_close(&file);
+          read_metadata = true;
+          continue;
+        #endif
+      }
+
+      // done if the file size matches the metadata
+      // since we may have re-opened the file, it's better to check 
+      // the file size didn't change
+      return metadata.app_size == file_size;
+    }
   }
 
   void close_update_file(FIL &file, const char *path)
