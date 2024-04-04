@@ -60,3 +60,7 @@
 // if not defined, the beeper is disabled
 // otherwise, beeper will be used to indicate errors
 #define BEEPER_PIN gpio::PB13
+
+// enable protection of the bootloader region using the MPU
+// possible values: [ 0, 1 ]
+#define ENABLE_BOOTLOADER_PROTECTION 1

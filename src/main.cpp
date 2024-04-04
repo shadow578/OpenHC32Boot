@@ -23,6 +23,16 @@ int main()
   hostSerial.init(HOST_SERIAL_BAUD);
   screen.init();
 
+  #if ENABLE_BOOTLOADER_PROTECTION == 1
+    // initialize protection of the bootloader region
+    mpu::init(true, true, false);
+    mpu::enable_region(0, mpu::region::build<
+      LD_FLASH_START, 
+      mpu::region::get_size(APP_BASE_ADDRESS - LD_FLASH_START), 
+      mpu::permissions::get(mpu::permissions::READ_ONLY, mpu::permissions::READ_ONLY), 
+      false>());
+  #endif
+
   // print hello message
   logging::log("OpenHC32Boot " BOOTLOADER_VERSION "\n");
   beep::beep();

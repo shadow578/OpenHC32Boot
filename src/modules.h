@@ -9,3 +9,4 @@
 #include "modules/log.h"
 #include "modules/cpuid.h"
 #include "modules/beep.h"
+#include "modules/mpu.h"
