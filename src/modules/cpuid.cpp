@@ -20,5 +20,16 @@ namespace cpuid
     logging::log(" ");
     logging::log(uid.uniqueID3, 16);
     logging::log("\n");
+
+    // system clock speed
+    stc_clk_freq_t clk;
+    CLK_GetClockFreq(&clk);
+    logging::log("SYS@");
+    logging::log(clk.sysclkFreq / 1000000, 10);
+    logging::log("MHz\n");
+
+    logging::log("HCLK@");
+    logging::log(clk.hclkFreq / 1000000, 10);
+    logging::log("MHz\n");
   }
 } // namespace cpuid

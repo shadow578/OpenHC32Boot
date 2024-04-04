@@ -10,3 +10,4 @@
 #include "modules/cpuid.h"
 #include "modules/beep.h"
 #include "modules/mpu.h"
+#include "modules/sysclock.h"
