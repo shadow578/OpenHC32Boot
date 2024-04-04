@@ -19,6 +19,21 @@ namespace flash
     write,
   };
 
+  /**
+   * @brief get the total flash size of the MCU (including bootloader)
+   * @note equal to the largest flash address + 1 
+   */
+  constexpr uint32_t get_flash_size()
+  {
+    #if FLASH_SIZE == 256
+      return 0x40000;
+    #elif FLASH_SIZE == 512
+      return 0x80000;
+    #else
+      #error "Invalid FLASH_SIZE"
+    #endif
+  }
+
   struct update_metadata
   {
     /**
@@ -80,14 +95,13 @@ namespace flash
       }
 
       /**
-       * @brief get the current update metadata stored in flash
-       * @param address start address of the metadata in flash
-       * @return the current update metadata stored in flash or nullptr if the metadata is invalid 
+       * @brief get the update metadata stored in flash
+       * @return the update metadata stored in flash or nullptr if the metadata is invalid 
        */
-      static const update_metadata *get_current(const uint32_t address)
+      static const update_metadata *get_stored()
       {
         // get the metadata from the flash
-        const uint32_t *metadata = reinterpret_cast<const uint32_t *>(address);
+        const uint32_t *metadata = reinterpret_cast<const uint32_t *>(get_start_address(get_flash_size()));
 
         // check if the metadata is valid
         if (metadata[0] == 0xFFFFFFFF)
@@ -99,6 +113,22 @@ namespace flash
       }
   
     #endif // STORE_UPDATE_METADATA == 1
+
+    /**
+     * @brief check if the stored metadata matches this metadata
+     * @return true if the stored metadata matches
+     * @note returns true if STORE_UPDATE_METADATA is disabled 
+     */
+    const bool matches_stored() const
+    {
+      #if STORE_UPDATE_METADATA == 1
+        const uint8_t *this_data = reinterpret_cast<const uint8_t *>(this);
+        const uint8_t *stored_data = reinterpret_cast<const uint8_t *>(get_stored()); 
+        return stored_data != nullptr && std::equal(this_data, this_data + sizeof(update_metadata), stored_data);
+      #else
+        return true;
+      #endif
+    }
   };
 
   /**
@@ -118,19 +148,4 @@ namespace flash
    * @return true if the firmware update was successful
    */
   bool apply_firmware_update(FIL &file, const uint32_t app_base_address, const update_metadata &metadata, const progress_callback progress);
-
-  /**
-   * @brief get the total flash size of the MCU (including bootloader)
-   * @note equal to the largest flash address + 1 
-   */
-  inline uint32_t get_flash_size()
-  {
-    #if FLASH_SIZE == 256
-      return 0x40000;
-    #elif FLASH_SIZE == 512
-      return 0x80000;
-    #else
-      #error "Invalid FLASH_SIZE"
-    #endif
-  }
 } // namespace flash

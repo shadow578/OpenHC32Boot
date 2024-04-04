@@ -40,15 +40,23 @@ int main()
   flash::update_metadata metadata;
   if (sd::get_update_file(file, metadata, FIRMWARE_UPDATE_FILE))
   {
-    // got the file, apply the update
-    if(!flash::apply_firmware_update(file, APP_BASE_ADDRESS, metadata, &on_progress))
+    // check if we've already flashed this firmware
+    if (metadata.matches_stored())
     {
-      logging::error("update failed\n");
-      beep::beep(500, 999);
+      logging::log("update skipped\n");
     }
     else
     {
-      logging::log("update applied\n");
+      // apply the update
+      if(!flash::apply_firmware_update(file, APP_BASE_ADDRESS, metadata, &on_progress))
+      {
+        logging::error("update failed\n");
+        beep::beep(500, 999);
+      }
+      else
+      {
+        logging::log("update applied\n");
+      }
     }
 
     // close the file
