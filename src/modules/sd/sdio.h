@@ -6,13 +6,13 @@ namespace sdio
 {
   struct pins_t
   {
-    pins::pin_t d0;
-    pins::pin_t d1;
-    pins::pin_t d2;
-    pins::pin_t d3;
-    pins::pin_t clk;
-    pins::pin_t cmd;
-    pins::pin_t det;
+    gpio::pin_t d0;
+    gpio::pin_t d1;
+    gpio::pin_t d2;
+    gpio::pin_t d3;
+    gpio::pin_t clk;
+    gpio::pin_t cmd;
+    gpio::pin_t det;
   };
   
   /**

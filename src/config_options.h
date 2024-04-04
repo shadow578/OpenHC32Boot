@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef __cplusplus
-  #include "pins.h"
+  #include "modules/gpio.h"
 #endif
 
 //

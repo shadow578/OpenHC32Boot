@@ -1,11 +1,43 @@
 #pragma once
 #include <hc32f460_gpio.h>
 
-namespace pins 
+namespace gpio 
 {
   struct pin_t {
     const en_port_t port;
     const en_pin_t pin;
+
+    /**
+     * @brief Set the pin as output
+     */
+    void asOutput() const;
+    
+    /**
+     * @brief Set the pin as input
+     * @param pullup enable the internal pullup resistor
+     */
+    void asInput(const bool pullup = false) const;
+
+    /**
+     * @brief Set the pin output level
+     * @note requires the pin to be set as output
+     */
+    void write(const bool level) const;
+
+    /**
+     * @brief Get the pin input level
+     * @note requires the pin to be set as input
+     */
+    bool read() const;
+
+    /**
+     * @brief Toggle the pin level
+     * @note requires the pin to be set as output
+     */
+    void toggle() const;
+
+    inline void low() const { write(false); }
+    inline void high() const { write(true); }
   };
 
   // PAx

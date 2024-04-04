@@ -8,7 +8,7 @@
 // host serial port
 // possible values: [ -1, 1, 2, 3, 4 ]
 #define HOST_SERIAL 2
-#define HOST_SERIAL_TX pins::PA9
+#define HOST_SERIAL_TX gpio::PA9
 #define HOST_SERIAL_BAUD 115200
 
 // screen implementation to use
@@ -18,7 +18,7 @@
 // DWIN screen serial port
 #if IS_SCREEN(SCREEN_DWIN)
   #define SCREEN_SERIAL 1
-  #define SCREEN_SERIAL_TX pins::PC0
+  #define SCREEN_SERIAL_TX gpio::PC0
 
   // DWIN screen orientation
   // possible values: [ portrait, landscape, portrait_inverted, landscape_inverted]
@@ -27,7 +27,7 @@
 
 // SDIO pin assignment
 // format: { <D0>, <D1>, <D2>, <D3>, <CLK>, <CMD>, <DET> }
-#define SDIO_PINS { pins::PC8, pins::PC9, pins::PC10, pins::PC11, pins::PC12, pins::PD2, pins::PA10 }
+#define SDIO_PINS { gpio::PC8, gpio::PC9, gpio::PC10, gpio::PC11, gpio::PC12, gpio::PD2, gpio::PA10 }
 
 // SDIO Peripheral
 // one of [ 1, 2 ]

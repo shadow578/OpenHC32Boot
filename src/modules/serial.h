@@ -3,7 +3,7 @@
 #include <hc32_ddl.h>
 #include "../config.h"
 #include "../util.h"
-#include "../pins.h"
+#include "gpio.h"
 
 /**
  * @brief serial communication class
@@ -16,7 +16,7 @@ public:
    * @param peripheral the peripheral
    * @param tx_pin the tx pin
    */
-  Serial(M4_USART_TypeDef *peripheral, const pins::pin_t tx_pin) : peripheral(peripheral), tx_pin(tx_pin) {}
+  Serial(M4_USART_TypeDef *peripheral, const gpio::pin_t tx_pin) : peripheral(peripheral), tx_pin(tx_pin) {}
 
   /**
    * @brief initialize the Serial
@@ -38,7 +38,7 @@ public:
 
 private:
   M4_USART_TypeDef *peripheral;
-  const pins::pin_t tx_pin;
+  const gpio::pin_t tx_pin;
 };
 
 #if defined(HOST_SERIAL) && HOST_SERIAL != -1
