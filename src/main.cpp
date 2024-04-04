@@ -30,7 +30,7 @@ int main()
       LD_FLASH_START, 
       mpu::region::get_size(APP_BASE_ADDRESS - LD_FLASH_START), 
       mpu::permissions::get(mpu::permissions::READ_ONLY, mpu::permissions::READ_ONLY), 
-      false>());
+      true>());
   #endif
 
   // print hello message
