@@ -2,6 +2,7 @@
 #include "pins_helper.h"
 #include "serial_helper.h"
 #include "common.h"
+#include "modules/flash.h"
 
 // APP_BASE_ADDRESS must align to the following:
 // - next power of 2 after the vector table size (= 1024 bytes)
@@ -9,8 +10,8 @@
 static_assert((APP_BASE_ADDRESS & (1024 - 1)) == 0, "APP_BASE_ADDRESS must be aligned to 1024 bytes");
 static_assert((APP_BASE_ADDRESS & (flash::erase_sector_size - 1)) == 0, "APP_BASE_ADDRESS must be aligned to the erase sector size");
 
-// flash size must be valid
-static_assert(FLASH_SIZE == 256 || FLASH_SIZE == 512, "FLASH_SIZE must be 256 or 512 KBytes");
+// total flash size must be valid
+static_assert(flash::total_size == (256 * 1024) || flash::total_size == (512 * 1024), "total flash size must be 256 or 512 KBytes");
 
 // serial peripherals should not be duplicated
 // only valid if both are enabled

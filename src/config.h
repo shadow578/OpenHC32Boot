@@ -1,10 +1,6 @@
 #pragma once
 #include "config_options.h"
 
-// flash size
-// possible values: [ 256, 512 ]
-#define FLASH_SIZE 256
-
 // host serial port
 // possible values: [ -1, 1, 2, 3, 4 ]
 #define HOST_SERIAL 2

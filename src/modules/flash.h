@@ -12,6 +12,7 @@ namespace flash
 
   constexpr uint32_t erase_sector_size = 8192; // 8Kb
   constexpr uint32_t file_buffer_size = 512;   // 512 bytes
+  constexpr uint32_t total_size = (LD_FLASH_SIZE + LD_FLASH_START);
 
   enum class update_stage
   {
@@ -25,13 +26,8 @@ namespace flash
    */
   constexpr uint32_t get_flash_size()
   {
-    #if FLASH_SIZE == 256
-      return 0x40000;
-    #elif FLASH_SIZE == 512
-      return 0x80000;
-    #else
-      #error "Invalid FLASH_SIZE"
-    #endif
+    //TODO auto-detect the flash size
+    return total_size;
   }
 
   struct update_metadata
