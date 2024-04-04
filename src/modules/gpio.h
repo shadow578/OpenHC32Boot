@@ -30,12 +30,6 @@ namespace gpio
      */
     bool read() const;
 
-    /**
-     * @brief Toggle the pin level
-     * @note requires the pin to be set as output
-     */
-    void toggle() const;
-
     inline void low() const { write(false); }
     inline void high() const { write(true); }
   };
