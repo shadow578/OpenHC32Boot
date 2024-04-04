@@ -12,6 +12,8 @@ void on_progress(const flash::update_stage stage, const int done, const int tota
   logging::info("\n");
   screen.showProgress((done * 100) / total);
   screen.flush();
+
+  beep::beep(10, 1);
 }
 
 int main()
@@ -23,6 +25,7 @@ int main()
 
   // print hello message
   logging::log("OpenHC32Boot " BOOTLOADER_VERSION "\n");
+  beep::beep();
 
   #if PRINT_CPUID == 1
     cpuid::print();
@@ -41,6 +44,7 @@ int main()
     if(!flash::apply_firmware_update(file, APP_BASE_ADDRESS, metadata, &on_progress))
     {
       logging::error("update failed\n");
+      beep::beep(500, 999);
     }
     else
     {

@@ -59,3 +59,8 @@
 
 // print the CPUID information
 #define PRINT_CPUID 1
+
+// beeper pin assignment
+// if not defined, the beeper is disabled
+// otherwise, beeper will be used to indicate errors
+#define BEEPER_PIN gpio::PB13

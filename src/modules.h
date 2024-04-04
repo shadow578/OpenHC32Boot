@@ -8,3 +8,4 @@
 #include "modules/serial.h"
 #include "modules/log.h"
 #include "modules/cpuid.h"
+#include "modules/beep.h"
