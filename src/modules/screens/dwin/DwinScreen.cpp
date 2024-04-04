@@ -9,12 +9,11 @@ constexpr dwin::color::color progress_bar_color = dwin::color::green;
 constexpr dwin::color::color progress_bar_background_color = dwin::color::black;
 constexpr dwin::color::color progress_bar_outline_color = dwin::color::white;
 
-
 void DwinScreen::init()
 {
   dwin::init();
 
-  dwin::screen_orientation orientation = dwin::screen_orientation:: SCREEN_ORIENTATION;
+  dwin::screen_orientation orientation = dwin::screen_orientation::SCREEN_ORIENTATION;
   dwin::set_orientation(orientation);
 
   clear();
@@ -42,7 +41,8 @@ void DwinScreen::write(const char *str)
   static char buffer[64];
 
   uint16_t new_cursor_x = cursor_x;
-  for(size_t i = 0; *str != '\0';)
+  uint16_t new_cursor_y = cursor_y;
+  for (size_t i = 0; *str != '\0';)
   {
     const char c = *str++;
     bool shouldFlush = false;
@@ -51,17 +51,11 @@ void DwinScreen::write(const char *str)
     // and flush the buffer
     if (c == '\n')
     {
-      cursor_x = 0;
-      cursor_y += dwin::font_size::get_character_height(font_size);
-      i = 0;
+      new_cursor_x = 0;
+      new_cursor_y += dwin::font_size::get_character_height(font_size);
       shouldFlush = true;
     }
-    else if (c == '\r')
-    {
-      cursor_x = 0;
-      i = 0;
-    }
-    else 
+    else
     {
       // otherwise, add the character to the buffer
       buffer[i++] = c;
@@ -81,6 +75,7 @@ void DwinScreen::write(const char *str)
       buffer[i] = '\0';
       dwin::draw_string(buffer, cursor_x, cursor_y, font_size, dwin::color::white);
       cursor_x = new_cursor_x;
+      cursor_y = new_cursor_y;
       i = 0;
     }
   }
