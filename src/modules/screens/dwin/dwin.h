@@ -5,6 +5,36 @@
 
 namespace dwin
 {
+  namespace constants
+  {
+    /**
+     * @brief FHONE byte
+     */
+    constexpr uint8_t FHONE = 0xAA;
+    
+    /**
+     * @brief header send before serial command data
+    */
+    constexpr uint8_t head[] = { FHONE };
+
+    /**
+     * @brief tail send after serial command data
+     */
+    constexpr uint8_t tail[] = { 0xCC, 0x33, 0xC3, 0x3C };
+
+    /**
+     * @brief microseconds inserted between bytes sent to the screen. 
+     * @note 0 to disable
+     */
+    constexpr uint32_t byte_tx_delay = 1;
+
+    /**
+     * @brief milliseconds to wait for a response from the screen, if not using RX
+     * @note 0 to disable 
+     */
+    constexpr uint32_t response_delay = 100;
+  }
+
   struct rectangle
   {
     int x;

@@ -2,6 +2,8 @@
  * serial driver based on the Arduino core's usart_sync driver
  */
 #include "serial.h"
+#include "delay.h"
+#include "assert.h"
 #include <addon_usart.h>
 
 // USART_TypeDef to gpio function select mapping
@@ -10,6 +12,12 @@
     : usart == M4_USART2 ? Func_Usart2_Tx \
     : usart == M4_USART3 ? Func_Usart3_Tx \
                          : Func_Usart4_Tx
+
+#define USART_DEV_TO_RX_FUNC(usart)       \
+    usart == M4_USART1   ? Func_Usart1_Rx \
+    : usart == M4_USART2 ? Func_Usart2_Rx \
+    : usart == M4_USART3 ? Func_Usart3_Rx \
+                         : Func_Usart4_Rx
 
 // USART_TypeDef to PWC_FCG1_PERIPH_USARTx mapping
 #define USART_DEV_TO_PERIPH_CLOCK(usart)          \
@@ -35,8 +43,13 @@ void Serial::init(uint32_t baudrate)
   // disable and de-init usart peripheral
   deinit();
 
-  // set tx pin function to USART TX output
+  // set rx and tx pins
   PORT_SetFunc(tx_pin.port, tx_pin.pin, USART_DEV_TO_TX_FUNC(peripheral), Disable);
+
+  if (has_rx)
+  {
+    PORT_SetFunc(rx_pin.port, rx_pin.pin, USART_DEV_TO_RX_FUNC(peripheral), Disable);
+  }
 
   // enable USART clock
   PWC_Fcg1PeriphClockCmd(USART_DEV_TO_PERIPH_CLOCK(peripheral), Enable);
@@ -80,10 +93,50 @@ void Serial::write(const char *str)
   }
 }
 
-#if defined(HOST_SERIAL) && HOST_SERIAL != -1
-  Serial hostSerial(CONCAT(M4_USART, HOST_SERIAL), HOST_SERIAL_TX);
+size_t Serial::read(uint8_t *buffer, const size_t length, const uint16_t timeout)
+{
+  ASSERT(has_rx, "this Serial instance does not support reading");
+
+  size_t read_bytes = 0;
+  for (; read_bytes < length; read_bytes++)
+  {
+    // wait until RX buffer is not empty
+    uint32_t time = 0;
+    while (USART_GetStatus(peripheral, UsartRxNoEmpty) != Set)
+    {
+      delay::us(1);
+      time++;
+      if (time > (timeout * 1000))
+      {
+        // timeout reached, return however many bytes were read
+        break;
+      }
+    }
+
+    // buffer full, read the byte
+    buffer[read_bytes] = USART_RecData(peripheral);
+    read_bytes++;
+  }
+
+  return read_bytes;
+}
+
+#if HAS_SERIAL(HOST_SERIAL)
+  Serial hostSerial(
+    CONCAT(M4_USART, HOST_SERIAL), 
+    HOST_SERIAL_TX
+    #if defined(HOST_SERIAL_RX)
+      , HOST_SERIAL_RX
+    #endif
+  );
 #endif
 
-#if defined(SCREEN_SERIAL) && SCREEN_SERIAL != -1
-  Serial screenSerial(CONCAT(M4_USART, SCREEN_SERIAL), SCREEN_SERIAL_TX);
+#if HAS_SERIAL(SCREEN_SERIAL)
+  Serial screenSerial(
+    CONCAT(M4_USART, SCREEN_SERIAL), 
+    SCREEN_SERIAL_TX
+    #if defined(SCREEN_SERIAL_RX)
+      , SCREEN_SERIAL_RX
+    #endif
+  );
 #endif

@@ -1,14 +1,51 @@
 #include "dwin.h"
 #include "../../serial.h"
+#include "../../log.h"
+#include "../../delay.h"
 #include "../../../util.h"
 #include <algorithm>
 
-extern Serial screenSerial;
-
 namespace dwin
 {
-  constexpr uint8_t DWIN_HEAD[] = { 0xAA };
-  constexpr uint8_t DWIN_TAIL[] = { 0xCC, 0x33, 0xC3, 0x3C };
+  /**
+   * @brief wait for dwin response
+   * @return true if response received, false otherwise
+   */
+  bool await_response()
+  {
+    #if defined(SCREEN_SERIAL_RX)
+      constexpr size_t read_buffer_size = 16;
+
+      // read up to 16 bytes from serial
+      uint8_t read_buffer[read_buffer_size];
+      const size_t received = screenSerial.read(read_buffer, read_buffer_size);
+
+      // log response
+      logging::debug("DWIN recv: ");
+      for (size_t i = 0; i < received; i++)
+      {
+        logging::debug(read_buffer[i], 16);
+        logging::debug(" ");
+      }
+      logging::debug(" (");
+      logging::debug(received, 10);
+      logging::debug(")\n");
+
+      // check for response
+      return ( received >= 3
+          && read_buffer[0] == constants::FHONE
+          && read_buffer[1] == '\0'
+          && read_buffer[2] == 'O'
+          && read_buffer[3] == 'K' );
+    #else
+      if (constants::response_delay != 0)
+      {
+        delay::ms(constants::response_delay);
+      }
+
+      return true;
+    #endif
+  }
 
   /**
    * @brief send data to the DWIN screen
@@ -17,31 +54,52 @@ namespace dwin
    */
   void send(const uint8_t *data, const uint16_t len)
   {
+    #define PUT(ch)                                         \
+      {                                                     \
+        screenSerial.put(ch);                               \
+        if (constants::byte_tx_delay != 0)                  \
+        {                                                   \
+          delay::us(constants::byte_tx_delay);              \
+        }                                                   \
+      }
+
     // send head
-    for (uint8_t i = 0; i < sizeof(DWIN_HEAD); i++)
+    for (const uint8_t ch : constants::head)
     {
-      screenSerial.put(DWIN_HEAD[i]);
+      PUT(ch);
     }
 
-    // send data
+    // send data and log it
+    logging::debug("DWIN send: ");
     for (uint16_t i = 0; i < len; i++)
     {
-      screenSerial.put(data[i]);
+      PUT(data[i]);
+      logging::debug(data[i], 16);
+      logging::debug(" ");
     }
+    logging::debug(" (");
+    logging::debug(len, 10);
+    logging::debug(")\n");
 
     // send tail
-    for (uint8_t i = 0; i < sizeof(DWIN_TAIL); i++)
+    for (const uint8_t ch : constants::tail)
     {
-      screenSerial.put(DWIN_TAIL[i]);
+      PUT(ch);
+    }
+
+    // wait for response
+    if (!await_response())
+    {
+      logging::debug("DWIN response not received");
     }
   }
 
   /**
    * @brief send data to the DWIN screen
   */
-  #define sendc(...)                       \
+  #define sendc(...)                              \
     {                                             \
-      const uint8_t data[] = { __VA_ARGS__ };           \
+      const uint8_t data[] = { __VA_ARGS__ };     \
       send(data, sizeof(data));                   \
     }
 
