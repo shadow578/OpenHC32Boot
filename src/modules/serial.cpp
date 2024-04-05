@@ -33,12 +33,7 @@ void Serial::init(uint32_t baudrate)
   };
 
   // disable and de-init usart peripheral
-  USART_FuncCmd(peripheral, UsartRx, Disable);
-  USART_FuncCmd(peripheral, UsartRxInt, Disable);
-  USART_FuncCmd(peripheral, UsartTx, Disable);
-  USART_FuncCmd(peripheral, UsartTxEmptyInt, Disable);
-  USART_FuncCmd(peripheral, UsartTxCmpltInt, Disable);
-  USART_DeInit(peripheral);
+  deinit();
 
   // set tx pin function to USART TX output
   PORT_SetFunc(tx_pin.port, tx_pin.pin, USART_DEV_TO_TX_FUNC(peripheral), Disable);
@@ -49,6 +44,20 @@ void Serial::init(uint32_t baudrate)
   // initialize USART peripheral and set baudrate
   USART_UART_Init(peripheral, &usart_config);
   SetUartBaudrate(peripheral, baudrate);
+}
+
+void Serial::deinit()
+{
+  #if SKIP_USART_DEINIT != 1
+    // implicitly done by USART_DeInit:
+    //USART_FuncCmd(peripheral, UsartRx, Disable);
+    //USART_FuncCmd(peripheral, UsartRxInt, Disable);
+    //USART_FuncCmd(peripheral, UsartTx, Disable);
+    //USART_FuncCmd(peripheral, UsartTxEmptyInt, Disable);
+    //USART_FuncCmd(peripheral, UsartTxCmpltInt, Disable);
+
+    USART_DeInit(peripheral);
+  #endif
 }
 
 void Serial::put(const uint8_t ch)

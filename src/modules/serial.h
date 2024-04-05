@@ -22,7 +22,12 @@ public:
    * @brief initialize the Serial
    * @param baudrate the baudrate 
    */
-  void init(uint32_t baudrate);  
+  void init(uint32_t baudrate);
+
+  /**
+   * @brief deinitialize the Serial
+   */
+  void deinit();  
 
   /**
    * @brief write a byte to the Serial
@@ -41,10 +46,10 @@ private:
   const gpio::pin_t tx_pin;
 };
 
-#if defined(HOST_SERIAL) && HOST_SERIAL != -1
+#if HAS_SERIAL(HOST_SERIAL)
   extern Serial hostSerial;
 #endif
 
-#if defined(SCREEN_SERIAL) && SCREEN_SERIAL != -1
+#if HAS_SERIAL(SCREEN_SERIAL)
   extern Serial screenSerial;
 #endif

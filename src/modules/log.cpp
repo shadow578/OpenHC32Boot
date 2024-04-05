@@ -16,7 +16,10 @@ namespace logging
 {
   void log(const char *message)
   {
-    hostSerial.write(message);
+    #if HAS_SERIAL(HOST_SERIAL)
+      hostSerial.write(message);
+    #endif
+
     screen.write(message);
     screen.flush();
   }

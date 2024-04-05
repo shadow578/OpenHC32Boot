@@ -71,3 +71,9 @@
 // enable protection of the bootloader region using the MPU
 // possible values: [ 0, 1 ]
 #define ENABLE_BOOTLOADER_PROTECTION 1
+
+// skip deinitialization of the USART peripheral on boot and before jumping to the application
+// may cause issues with the application, so enable with caution
+#define SKIP_USART_DEINIT 0
+
+

@@ -23,7 +23,10 @@ int main()
   sysclock::apply();
   
   // initialize serial and ui
-  hostSerial.init(HOST_SERIAL_BAUD);
+  #if HAS_SERIAL(HOST_SERIAL) 
+    hostSerial.init(HOST_SERIAL_BAUD);
+  #endif
+
   screen.init();
 
   #if ENABLE_BOOTLOADER_PROTECTION == 1
@@ -76,9 +79,19 @@ int main()
     sd::close_update_file(file, FIRMWARE_UPDATE_FILE);
   }
 
-  // jump to the application
+  // log application jump address
   logging::log("jumping to app @ ");
   logging::log(APP_BASE_ADDRESS, 16);
   logging::log("\n");
+
+  // deinitialize serial to prevent interference with the application
+  #if HAS_SERIAL(HOST_SERIAL)
+    hostSerial.deinit();
+  #endif
+  #if HAS_SERIAL(SCREEN_SERIAL)
+    screenSerial.deinit();
+  #endif
+
+  // jump to the application
   leap::jump(APP_BASE_ADDRESS);
 }
