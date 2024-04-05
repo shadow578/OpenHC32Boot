@@ -25,7 +25,7 @@ namespace sysclock
     _apply(false);
   }
 
-  void reset()
+  void restore()
   {
     #if SKIP_CLOCK_RESTORE != 1
       _apply(true);
