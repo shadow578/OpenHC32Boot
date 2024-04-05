@@ -111,7 +111,10 @@ namespace sd
           // open file again, but don't read metadata
           // this is (more or less) equal to f_rewind(), but 
           // with reduced memory usage
-          f_close(&file);
+          #if SKIP_FILE_CLEANUP != 1
+            f_close(&file);
+          #endif
+
           read_metadata = true;
           continue;
         #endif
@@ -126,38 +129,40 @@ namespace sd
 
   void close_update_file(FIL &file, const char *path)
   {
-    // close the file
-    FRESULT res = f_close(&file);
-    if (res != FR_OK)
-    {
-      logging::error("f_close() err=");
-      logging::error(res, 10);
-      logging::error("\n");
-
-      // don't care for error here
-    }
-
-    #if DELETE_FIRMEWARE_UPDATE_FILE == 1
-      res = f_unlink(path);
+    #if SKIP_FILE_CLEANUP != 1
+      // close the file
+      FRESULT res = f_close(&file);
       if (res != FR_OK)
       {
-        logging::error("f_unlink() err=");
+        logging::error("f_close() err=");
         logging::error(res, 10);
         logging::error("\n");
-
+  
         // don't care for error here
       }
-    #endif
-
-    // unmount the file system
-    res = f_unmount("");
-    if (res != FR_OK)
-    {
-      logging::error("f_unmount() err=");
-      logging::error(res, 10);
-      logging::error("\n");
-
-      // don't care for error here
-    }
+  
+      #if DELETE_FIRMEWARE_UPDATE_FILE == 1
+        res = f_unlink(path);
+        if (res != FR_OK)
+        {
+          logging::error("f_unlink() err=");
+          logging::error(res, 10);
+          logging::error("\n");
+  
+          // don't care for error here
+        }
+      #endif
+  
+      // unmount the file system
+      res = f_unmount("");
+      if (res != FR_OK)
+      {
+        logging::error("f_unmount() err=");
+        logging::error(res, 10);
+        logging::error("\n");
+  
+        // don't care for error here
+      }
+    #endif // SKIP_FILE_CLEANUP != 1
   }
 } // namespace sd

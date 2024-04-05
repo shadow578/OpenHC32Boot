@@ -76,4 +76,8 @@
 // may cause issues with the application, so enable with caution
 #define SKIP_USART_DEINIT 0
 
-
+// skip calls to f_close and f_unmount for files.
+// - in read-only mode, this should be safe, but still may cause issues
+// - in read-write mode, this may changes to files to not be saved
+// enable with caution
+#define SKIP_FILE_CLEANUP 0
