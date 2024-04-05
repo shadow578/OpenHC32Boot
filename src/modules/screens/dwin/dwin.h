@@ -32,7 +32,7 @@ namespace dwin
      * @brief milliseconds to wait for a response from the screen, if not using RX
      * @note 0 to disable 
      */
-    constexpr uint32_t response_delay = 100;
+    constexpr uint32_t response_delay = 50;
   }
 
   struct rectangle

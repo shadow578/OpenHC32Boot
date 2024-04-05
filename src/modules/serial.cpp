@@ -57,6 +57,12 @@ void Serial::init(uint32_t baudrate)
   // initialize USART peripheral and set baudrate
   USART_UART_Init(peripheral, &usart_config);
   SetUartBaudrate(peripheral, baudrate);
+
+  // enable RX function
+  if (has_rx)
+  {
+    USART_FuncCmd(peripheral, UsartRx, Enable);
+  }
 }
 
 void Serial::deinit()
@@ -109,12 +115,12 @@ size_t Serial::read(uint8_t *buffer, const size_t length, const uint16_t timeout
       if (time > (timeout * 1000))
       {
         // timeout reached, return however many bytes were read
-        break;
+        return read_bytes;
       }
     }
 
     // buffer full, read the byte
-    buffer[read_bytes] = USART_RecData(peripheral);
+    buffer[read_bytes] = static_cast<uint8_t>(USART_RecData(peripheral));
     read_bytes++;
   }
 

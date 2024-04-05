@@ -20,17 +20,6 @@ namespace dwin
       uint8_t read_buffer[read_buffer_size];
       const size_t received = screenSerial.read(read_buffer, read_buffer_size);
 
-      // log response
-      logging::debug("DWIN recv: ");
-      for (size_t i = 0; i < received; i++)
-      {
-        logging::debug(read_buffer[i], 16);
-        logging::debug(" ");
-      }
-      logging::debug(" (");
-      logging::debug(received, 10);
-      logging::debug(")\n");
-
       // check for response
       return ( received >= 3
           && read_buffer[0] == constants::FHONE
@@ -70,16 +59,10 @@ namespace dwin
     }
 
     // send data and log it
-    logging::debug("DWIN send: ");
     for (uint16_t i = 0; i < len; i++)
     {
       PUT(data[i]);
-      logging::debug(data[i], 16);
-      logging::debug(" ");
     }
-    logging::debug(" (");
-    logging::debug(len, 10);
-    logging::debug(")\n");
 
     // send tail
     for (const uint8_t ch : constants::tail)
@@ -90,7 +73,7 @@ namespace dwin
     // wait for response
     if (!await_response())
     {
-      logging::debug("DWIN response not received");
+      //logging::debug("DWIN response not received");
     }
   }
 

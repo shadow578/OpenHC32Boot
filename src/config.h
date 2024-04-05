@@ -18,7 +18,7 @@
 
   // DWIN screen rx pin.
   // if not defined, the screen module will use delay-based communication
-  #define SCREEN_SERIAL_RX gpio::PC1
+  //#define SCREEN_SERIAL_RX gpio::PC1
 
   // DWIN screen orientation
   // possible values: [ portrait, landscape, portrait_inverted, landscape_inverted]
