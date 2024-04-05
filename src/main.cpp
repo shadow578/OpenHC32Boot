@@ -92,6 +92,9 @@ int main()
     screenSerial.deinit();
   #endif
 
+  // restore the clock configuration
+  sysclock::restore();
+
   // jump to the application
   leap::jump(APP_BASE_ADDRESS);
 }

@@ -85,3 +85,6 @@
 // - in read-write mode, this may changes to files to not be saved
 // enable with caution
 #define SKIP_FILE_CLEANUP 0
+
+// skip restoring the clock configuration before jumping to the application
+#define SKIP_CLOCK_RESTORE 0
