@@ -4,15 +4,15 @@
 
 namespace sdio
 {
+  constexpr gpio::pin_t __sdio_pins_arr[] = SDIO_PINS;
+  constexpr int bus_width = countof(__sdio_pins_arr) - 3; // subtract CLK, CMD, DET
+
   struct pins_t
   {
-    gpio::pin_t d0;
-    gpio::pin_t d1;
-    gpio::pin_t d2;
-    gpio::pin_t d3;
     gpio::pin_t clk;
     gpio::pin_t cmd;
     gpio::pin_t det;
+    gpio::pin_t dat[8];
   };
   
   /**

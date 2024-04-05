@@ -9,6 +9,25 @@
 #define SDIO_UNIT CONCAT(M4_SDIOC, SDIO_PERIPHERAL);
 
 /**
+ * @brief get SDIO bus width
+ * @param width number of pins used for data
+ * @return bus width
+ */
+constexpr en_sdioc_bus_width_t get_sdioc_bus_width(const int width)
+{
+  switch (width)
+  {
+  default:
+  case 1:
+    return SdiocBusWidth1Bit;
+  case 4:
+    return SdiocBusWidth4Bit;
+  case 8:
+    return SdiocBusWidth8Bit;
+  }
+}
+
+/**
  * @brief SD card handle 
  */
 stc_sd_handle_t *handle = nullptr;
@@ -26,11 +45,28 @@ extern "C" DSTATUS disk_initialize(BYTE pdrv)
   // };
   // PORT_Init(sdio::pins.clk.port, sdio::pins.clk.pin, &clockPinInit);
   
-  // configure SDIO pins
-  PORT_SetFunc(sdio::pins.d0.port, sdio::pins.d0.pin, Func_Sdio, Disable);
-  PORT_SetFunc(sdio::pins.d1.port, sdio::pins.d1.pin, Func_Sdio, Disable);
-  PORT_SetFunc(sdio::pins.d2.port, sdio::pins.d2.pin, Func_Sdio, Disable);
-  PORT_SetFunc(sdio::pins.d3.port, sdio::pins.d3.pin, Func_Sdio, Disable);
+  // configure SDIO pins:
+  // 1-bit bus width
+  PORT_SetFunc(sdio::pins.dat[0].port, sdio::pins.dat[0].pin, Func_Sdio, Disable);
+
+  // 4 and 8-bit bus width
+  if (sdio::bus_width > 1)
+  {
+    PORT_SetFunc(sdio::pins.dat[1].port, sdio::pins.dat[1].pin, Func_Sdio, Disable);
+    PORT_SetFunc(sdio::pins.dat[2].port, sdio::pins.dat[2].pin, Func_Sdio, Disable);
+    PORT_SetFunc(sdio::pins.dat[3].port, sdio::pins.dat[3].pin, Func_Sdio, Disable);
+  }
+
+  // 8-bit bus width
+  if (sdio::bus_width > 4)
+  {
+    PORT_SetFunc(sdio::pins.dat[4].port, sdio::pins.dat[4].pin, Func_Sdio, Disable);
+    PORT_SetFunc(sdio::pins.dat[5].port, sdio::pins.dat[5].pin, Func_Sdio, Disable);
+    PORT_SetFunc(sdio::pins.dat[6].port, sdio::pins.dat[6].pin, Func_Sdio, Disable);
+    PORT_SetFunc(sdio::pins.dat[7].port, sdio::pins.dat[7].pin, Func_Sdio, Disable);
+  }
+
+  // CLK, CMD and DET
   PORT_SetFunc(sdio::pins.clk.port, sdio::pins.clk.pin, Func_Sdio, Disable);
   PORT_SetFunc(sdio::pins.cmd.port, sdio::pins.cmd.pin, Func_Sdio, Disable);
   PORT_SetFunc(sdio::pins.det.port, sdio::pins.det.pin, Func_Sdio, Disable);
@@ -48,7 +84,7 @@ extern "C" DSTATUS disk_initialize(BYTE pdrv)
   // Create card configuration
   // This should be a fairly safe configuration for most cards
   stc_sdcard_init_t *cardConf = new stc_sdcard_init_t;
-  cardConf->enBusWidth = SdiocBusWidth4Bit;
+  cardConf->enBusWidth = get_sdioc_bus_width(sdio::bus_width);
   cardConf->enClkFreq = SdiocClk400K;
   cardConf->enSpeedMode = SdiocNormalSpeedMode;
   cardConf->pstcInitCfg = nullptr;

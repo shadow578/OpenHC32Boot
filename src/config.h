@@ -25,9 +25,12 @@
   #define SCREEN_DIMENSIONS { 272, 480 }
 #endif
 
-// SDIO pin assignment
-// format: { <D0>, <D1>, <D2>, <D3>, <CLK>, <CMD>, <DET> }
-#define SDIO_PINS { gpio::PC8, gpio::PC9, gpio::PC10, gpio::PC11, gpio::PC12, gpio::PD2, gpio::PA10 }
+// SDIO pin assignment. Bus width is selected accordingly.
+// format: 
+// - 1-bit bus width: { <CLK>, <CMD>, <DET>, <D0> }
+// - 4-bit bus width: { <CLK>, <CMD>, <DET>, <D0>, <D1>, <D2>, <D3> }
+// - 8-bit bus width: { <CLK>, <CMD>, <DET>, <D0>, <D1>, <D2>, <D3>, <D4>, <D5>, <D6>, <D7> }
+#define SDIO_PINS { gpio::PC12, gpio::PD2, gpio::PA10, gpio::PC8, gpio::PC9, gpio::PC10, gpio::PC11 }
 
 // SDIO Peripheral
 // one of [ 1, 2 ]

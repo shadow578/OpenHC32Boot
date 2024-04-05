@@ -3,6 +3,7 @@
 #include "serial_helper.h"
 #include "common.h"
 #include "modules/flash.h"
+#include "modules/sd/sdio.h"
 
 // APP_BASE_ADDRESS must align to the following:
 // - next power of 2 after the vector table size (= 1024 bytes)
@@ -51,3 +52,6 @@ constexpr gpio::pin_t loose_pins[] = {
 static_assert(!has_duplicates(loose_pins), "Pins must not be duplicated");
 static_assert(!has_duplicates(sdio_pins), "SDIO pins must not be duplicated");
 static_assert(!containsAny(sdio_pins, loose_pins), "SDIO pins must not be reused");
+
+// SDIO pins must be valid for either 1-bit, 4-bit or 8-bit bus width
+static_assert(sdio::bus_width == 1 || sdio::bus_width == 4 || sdio::bus_width == 8, "SDIO_PINS must be valid for bus width of 1, 4 or 8 bits");
