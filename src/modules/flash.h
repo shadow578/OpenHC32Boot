@@ -8,11 +8,13 @@ namespace flash
   /**
    * @brief set to true to simulate the firmware update without writing to flash 
    */
-  constexpr bool dry_run = true;
+  constexpr bool dry_run = false;
 
   constexpr uint32_t erase_sector_size = 8192; // 8Kb
   constexpr uint32_t file_buffer_size = 512;   // 512 bytes
   constexpr uint32_t total_size = (LD_FLASH_SIZE + LD_FLASH_START);
+
+  static_assert(file_buffer_size % 4 == 0, "file buffer size must be aligned to 32-bit words");
 
   enum class update_stage
   {
@@ -70,7 +72,13 @@ namespace flash
        */
       static constexpr uint32_t get_start_address(const uint32_t flash_end_address)
       {
-        return flash_end_address - (get_word_count() * 4);
+        uint32_t address =  flash_end_address - (get_word_count() * 4);
+
+        // address must be aligned to the nearest word
+        // so round down to the nearest word
+        address -= address % 4;
+        
+        return address;
       }
 
       /**

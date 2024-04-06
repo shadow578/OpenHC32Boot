@@ -50,7 +50,7 @@ namespace flash
       }
 
       // update progress
-      progress(update_stage::erase, sector, total_sector_count);
+      progress(update_stage::erase, sector - start_sector, total_sector_count);
     }
 
     return true;
@@ -71,6 +71,13 @@ namespace flash
     logging::debug(" words @ 0x");
     logging::debug(start_address, 16);
     logging::debug("\n");
+
+    // start address must be on a 32-bit boundary
+    if (start_address % 4 != 0)
+    {
+      logging::error("start address misaligned\n");
+      return false;
+    }
 
     for(uint32_t i = 0, address = start_address; i < words_to_write; i++, address += 4)
     {
@@ -116,6 +123,7 @@ namespace flash
   bool write_file(FIL *file, const uint32_t start, const uint32_t end, const progress_callback progress)
   {
     const DWORD total_bytes = end - start;
+    bool did_pad = false;
     for(DWORD total_bytes_written = 0;;)
     {
       // read the next block
@@ -136,11 +144,23 @@ namespace flash
       }
 
       // pad the buffer with 0xff if not aligned to 32-bit word
-      while ((bytes_read % 4) != 0)
+      // only allowed at the end of the file
+      if((bytes_read % 4) != 0)
       {
-        buffer[bytes_read++] = 0xff;
-      }
+        if (did_pad)
+        {
+          logging::error("attempted to pad data twice\n");
+          return false;
+        }
 
+        while ((bytes_read % 4) != 0)
+        {
+          buffer[bytes_read++] = 0xff;
+        }
+
+        did_pad = true;
+      }
+      
       // prepare start address for this block
       const uint32_t block_address = start + total_bytes_written;
 
@@ -164,24 +184,15 @@ namespace flash
   {
     // calculate end addresses
     const uint32_t program_end_address = app_base_address + metadata.app_size;
-    const uint32_t flash_end_address_real = get_flash_size() - 1;
-    uint32_t flash_end_address = flash_end_address_real;
-
-    // determine how many sectors to erase
-    #if STORE_UPDATE_METADATA == 1
-      // metadata is stored at the end of the flash, so
-      // erase all sectors starting from the app_base_address to the end of the flash
-      const uint32_t erase_end_address = flash_end_address;
-
-      // also, reduce the flash_end_address by the metadata size to avoid overwriting it
-      flash_end_address = update_metadata::get_start_address(flash_end_address_real);
-    #else
-      // erase only the sectors that contain the application
-      const uint32_t erase_end_address = app_base_address;
-    #endif
+    const uint32_t flash_end_address = get_flash_size() - 1;
+    const uint32_t metadata_start_address = update_metadata::get_start_address(flash_end_address);
 
     // ensure the update fits in the flash
-    if (program_end_address > flash_end_address)
+    #if STORE_UPDATE_METADATA == 1
+      if (program_end_address >= metadata_start_address) // can only occupy up to the metadata
+    #else
+      if (program_end_address > flash_end_address) // can occupy the entire flash
+    #endif
     {
       logging::error("update too large\n");
       return false;
@@ -197,25 +208,36 @@ namespace flash
 
     bool success = true;
 
-    // erase the flash
-    if (!erase(app_base_address, erase_end_address, progress))
+    // erase the flash required for the application
+    if (!erase(app_base_address, program_end_address, progress))
     {
-      logging::error("erase failed\n");
+      logging::error("app erase failed\n");
       success = false;
       goto cleanup; // cannot return directly because of cleanup
     }
 
+    #if STORE_UPDATE_METADATA == 1
+      // erase the flash required for the metadata
+      // metadata is stored at the end of the flash
+      if (!erase(metadata_start_address, flash_end_address, progress))
+      {
+        logging::error("metadata erase failed\n");
+        success = false;
+        goto cleanup; // cannot return directly because of cleanup
+      }
+    #endif
+
     // write the firmware update to the flash
     if (!write_file(&file, app_base_address, program_end_address, progress))
     {
-      logging::error("write failed\n");
+      logging::error("write app failed\n");
       success = false;
       goto cleanup; // cannot return directly because of cleanup
     }
 
     #if STORE_UPDATE_METADATA == 1
       // write the metadata
-      if (!write(update_metadata::get_start_address(flash_end_address_real), metadata.get_data(), metadata.get_word_count()))
+      if (!write(metadata_start_address, metadata.get_data(), metadata.get_word_count()))
       {
         logging::error("write metadata failed\n");
         success = false;
