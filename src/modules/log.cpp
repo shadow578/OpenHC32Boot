@@ -63,20 +63,23 @@ namespace logging
     }
   }
 
-  void log(const char *message)
+  void log(const char *message, const bool to_screen)
   {
     #if HAS_SERIAL(HOST_SERIAL)
       hostSerial.write(message);
     #endif
 
-    screen.write(message);
-    screen.flush();
+    if (to_screen)
+    {
+      screen.write(message);
+      screen.flush();
+    }
   }
 
-  void log(uint32_t number, const int base)
+  void log(uint32_t number, const int base, const bool to_screen)
   {
     char buffer[32 + 1]; // maximum length of a 32 bit number in binary + null terminator
     formatters::format_number(buffer, number, base);
-    log(buffer);
+    log(buffer, to_screen);
   }
 }

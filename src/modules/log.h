@@ -20,41 +20,43 @@ namespace logging
 
   /**
    * @brief log a message
-   * @param message the message to log 
+   * @param message the message to log
+   * @param to_screen whether or not to log to the screen as well
    */
-  void log(const char *message);
+  void log(const char *message, const bool to_screen = true);
 
   /**
    * @brief log a number
    * @param number the number to log
    * @param base the base of the number
+   * @param to_screen whether or not to log to the screen as well
    */
-  void log(uint32_t number, const int base);
+  void log(uint32_t number, const int base, const bool to_screen = true);
 
 
-  #define _DEF_LOG_IMPL(name)                                                       \
-    inline void name(const char *message) { log(message); }                         \
-    inline void name(uint32_t number, const int base) { log(number, base); }
+  #define _DEF_LOG_IMPL(name, to_screen)                                                    \
+    inline void name(const char *message) { log(message, to_screen); }                      \
+    inline void name(uint32_t number, const int base) { log(number, base, to_screen); }
 
-  #define _DEF_LOG_DUMMY(name)                                                      \
-    inline void name(const char *message) { }                                       \
+  #define _DEF_LOG_DUMMY(name)                                                              \
+    inline void name(const char *message) { }                                               \
     inline void name(uint32_t number, const int base) { }
 
 
   #if IS_LOG_LEVEL(LOG_LEVEL_DEBUG)
-    _DEF_LOG_IMPL(debug)
+    _DEF_LOG_IMPL(debug, false)
   #else
     _DEF_LOG_DUMMY(debug)
   #endif
 
   #if IS_LOG_LEVEL(LOG_LEVEL_INFO)
-    _DEF_LOG_IMPL(info)
+    _DEF_LOG_IMPL(info, true)
   #else
     _DEF_LOG_DUMMY(info)
   #endif
 
   #if IS_LOG_LEVEL(LOG_LEVEL_ERROR)
-    _DEF_LOG_IMPL(error)
+    _DEF_LOG_IMPL(error, true)
   #else
     _DEF_LOG_DUMMY(error)
   #endif
