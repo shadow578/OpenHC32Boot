@@ -91,3 +91,9 @@
 
 // wait for a debugger to be attached before running the bootloader
 #define WAIT_FOR_DEBUGGER 0
+
+// disable debugging pins for compatibilty with firmware expecting other bootloaders
+// combination of [ COMPAT_DBG_SWCLK, COMPAT_DBG_SWDIO, COMPAT_DBG_JTDO, COMPAT_DBG_JTDI, COMPAT_DBG_NJTRST ] (e.g. COMPAT_DBG_SWCLK | COMPAT_DBG_SWDIO)
+// or preset, one of [ COMPAT_DBG_VOXELAB_AQUILA_X2 ]
+// or undefined to keep the default configuration
+#define COMPAT_DISABLE_DEBUG_PORT COMPAT_DBG_VOXELAB_AQUILA_X2

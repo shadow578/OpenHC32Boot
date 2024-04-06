@@ -44,6 +44,7 @@ int main()
   // initialize system
   fault_handler::init();
   sysclock::apply();
+  compat::apply();
   
   // initialize serial and ui
   #if HAS_SERIAL(HOST_SERIAL) 

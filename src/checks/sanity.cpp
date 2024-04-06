@@ -61,3 +61,8 @@ static_assert(!(SKIP_FILE_CLEANUP == 1 && DELETE_FIRMEWARE_UPDATE_FILE == 1), "S
 
 // pre-checks should not be disabled completely without annoying the user
 static_assert(PRE_CHECK_LEVEL != PRE_CHECK_NONE, "PRE_CHECK_LEVEL should not be disabled completely");
+
+// compat option to disable debug port should result in valid mask
+#if COMPAT_DISABLE_DEBUG_PORT != 0
+  static_assert((COMPAT_DISABLE_DEBUG_PORT & 0x1F) == COMPAT_DISABLE_DEBUG_PORT, "COMPAT_DISABLE_DEBUG_PORT must be a valid mask");
+#endif

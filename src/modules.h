@@ -12,3 +12,4 @@
 #include "modules/mpu.h"
 #include "modules/sysclock.h"
 #include "modules/assert.h"
+#include "modules/compat.h"
