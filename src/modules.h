@@ -11,3 +11,4 @@
 #include "modules/beep.h"
 #include "modules/mpu.h"
 #include "modules/sysclock.h"
+#include "modules/assert.h"

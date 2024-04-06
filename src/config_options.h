@@ -33,3 +33,13 @@
 #define LOG_LEVEL_OFF 3
 
 #define IS_LOG_LEVEL(level) (LOG_LEVEL <= level)
+
+//
+// pre-jump checks
+//
+#define PRE_CHECK_NONE -1
+#define PRE_CHECK_MINIMAL 3
+#define PRE_CHECK_EXTENDED 2
+#define PRE_CHECK_FULL 1
+
+#define IS_PRE_CHECK_LEVEL(level) (PRE_CHECK_LEVEL <= level && PRE_CHECK_LEVEL != PRE_CHECK_NONE)

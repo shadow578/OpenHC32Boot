@@ -66,3 +66,6 @@ static_assert(sdio::bus_width == 1 || sdio::bus_width == 4 || sdio::bus_width ==
 
 // SKIP_FILE_CLEANUP is only allowed enabled if DELETE_FIRMEWARE_UPDATE_FILE is disabled
 static_assert(!(SKIP_FILE_CLEANUP == 1 && DELETE_FIRMEWARE_UPDATE_FILE == 1), "SKIP_FILE_CLEANUP will cause DELETE_FIRMEWARE_UPDATE_FILE to fail. Disable one of them.");
+
+// pre-checks should not be disabled completely without annoying the user
+static_assert(PRE_CHECK_LEVEL != PRE_CHECK_NONE, "PRE_CHECK_LEVEL should not be disabled completely");

@@ -76,6 +76,10 @@
 // possible values: [ 0, 1 ]
 #define ENABLE_BOOTLOADER_PROTECTION 1
 
+// run pre-jump checks
+// possible values: [ MINIMAL, EXTENDED, FULL ]
+#define PRE_CHECK_LEVEL PRE_CHECK_FULL
+
 // skip deinitialization of the USART peripheral on boot and before jumping to the application
 // may cause issues with the application, so enable with caution
 #define SKIP_USART_DEINIT 0

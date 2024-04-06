@@ -68,6 +68,7 @@ int main()
       {
         logging::error("update failed\n");
         beep::beep(500, 999);
+        ASSERT(false, "update failed");
       }
       else
       {
@@ -83,6 +84,14 @@ int main()
   logging::log("jumping to app @ ");
   logging::log(APP_BASE_ADDRESS, 16);
   logging::log("\n");
+
+  // run pre-checks on the application
+  if (!leap::pre_check(APP_BASE_ADDRESS))
+  {
+    logging::log("pre-check fail! skip jump\n");
+    beep::beep(250, 999);
+    ASSERT(false, "pre-check fail");
+  }
 
   // deinitialize serial to prevent interference with the application
   #if HAS_SERIAL(HOST_SERIAL)
