@@ -11,5 +11,5 @@ public:
   void clear() override {}
   void write(const char *str) override {}
   void flush() override {}
-  void showProgress(const uint8_t progress) override {}
+  void showProgress(const uint32_t progress, const uint32_t total = 100, const char* message = nullptr) override {}
 };

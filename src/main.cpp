@@ -4,15 +4,34 @@
 
 void on_progress(const flash::update_stage stage, const int done, const int total)
 {
-  logging::info(stage == flash::update_stage::erase ? "erase" : "write");
-  logging::info(": ");
-  logging::info(done, 10);
-  logging::info(" of ");
-  logging::info(total, 10);
-  logging::info("\n");
-  screen.showProgress((done * 100) / total);
+  // build update status string
+  char status_str[
+    5 +   // "erase" or "write"
+    2 +   // ": "
+    10 +  // done, base 10 -> max. 10 characters
+    4 +   // " of "
+    10 +  // total, base 10 -> max. 10 characters
+    1     // null terminator
+  ];
+
+  strcpy(status_str, stage == flash::update_stage::erase ? "erase" : "write");
+  strcat(status_str, ": ");
+  logging::formatters::format_number(status_str + strlen(status_str), done, 10);
+  strcat(status_str, " of ");
+  logging::formatters::format_number(status_str + strlen(status_str), total, 10);
+
+  // print the status to the host serial only
+  // screen already shows the progress bar with the status message
+  #if HAS_SERIAL(HOST_SERIAL)
+    hostSerial.write(status_str);
+    hostSerial.write("\n");
+  #endif
+  
+  // print the status to the screen
+  screen.showProgress(done, total, status_str);
   screen.flush();
 
+  // short blip
   beep::beep(10, 1);
 }
 
@@ -41,7 +60,7 @@ int main()
 
   // print hello message
   logging::log("OpenHC32Boot " BOOTLOADER_VERSION "\n");
-  beep::beep();
+  beep::beep(100);
 
   #if PRINT_CPUID == 1
     cpuid::print();

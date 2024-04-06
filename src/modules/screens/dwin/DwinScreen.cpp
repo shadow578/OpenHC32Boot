@@ -102,18 +102,27 @@ void DwinScreen::write(const char *str)
   dwin::redraw();
 }
 
-void DwinScreen::showProgress(const uint8_t progress)
+void DwinScreen::showProgress(const uint32_t progress, const uint32_t total, const char* message)
 {
   // draw progress bar background
   dwin::draw_rectangle(progress_bar_background_color, progress_bar_area, /*fill*/ true);
 
   // draw progress bar
-  const uint16_t progress_width = (progress * progress_bar_area.width) / 100;
+  const uint16_t progress_width = (progress * progress_bar_area.width) / total;
   const dwin::rectangle progress_bar = {progress_bar_area.x, progress_bar_area.y, progress_width, progress_bar_area.height};
   dwin::draw_rectangle(progress_bar_color, progress_bar, /*fill*/ true);
 
   // draw progress bar outline
   dwin::draw_rectangle(progress_bar_outline_color, progress_bar_area, /*fill*/ false);
+
+  // draw progress message in the center of the progress bar
+  if (message != nullptr)
+  {
+    const uint16_t message_width = strlen(message) * font_width;
+    const uint16_t message_x = (progress_bar_area.width - message_width) / 2;
+    const uint16_t message_y = progress_bar_area.y + (progress_bar_area.height - font_height) / 2;
+    dwin::draw_string(message, message_x, message_y, font_size, font_color);
+  }
 
   dwin::redraw();
 }

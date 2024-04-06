@@ -31,7 +31,9 @@ public:
 
   /**
    * @brief show progress bar on the screen
-   * @param progress the progress to show [0, 100] 
+   * @param progress the progress to show [0 - total]
+   * @param total the total amount to progress to
+   * @param message the message to show with the progress bar. if nullptr, no message is shown
    */
-  virtual void showProgress(const uint8_t progress) = 0;
+  virtual void showProgress(const uint32_t progress, const uint32_t total = 100, const char* message = nullptr) = 0;
 };

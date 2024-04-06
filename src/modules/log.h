@@ -4,6 +4,20 @@
 
 namespace logging
 {
+  namespace formatters
+  {
+    /**
+     * @brief format a number
+     * @param str the buffer to write the formatted number to
+     * @param number the number to format
+     * @param base the base of the number. one of [2, 10, 16]
+     * @return the number of characters written, excluding the null terminator
+     * @note the buffer must be large enough to hold the largest number in the given base plus the null terminator
+     *       this is [33, 11, 9] for base [2, 10, 16] respectively
+     */
+    int format_number(char *str, uint32_t number, const int base);
+  } // namespace formatters
+
   /**
    * @brief log a message
    * @param message the message to log 
