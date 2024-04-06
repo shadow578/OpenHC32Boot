@@ -115,6 +115,12 @@ namespace mpu
        * @brief The access permissions of the region in privileged mode.
        */
       uint8_t access_permissions;
+      
+      /**
+       * @brief TEX, S, C, B bits for the region.
+       * @note already shifted to the correct position.
+       */
+      uint32_t tex_s_c_b;
 
       /**
        * @brief Allow execution in the region (XN bit)?
@@ -150,6 +156,45 @@ namespace mpu
     }
 
     /**
+     * @brief get the [T]ype [E]xtension [M]ask and
+     * [S]hareable, [C]acheable and [B]ufferable bits
+     * based on the region the base address is in.
+     */
+    constexpr uint32_t get_tex_scb(const uint32_t base_address)
+    {
+      //constexpr uint32_t FLASH_REGION_START = 0x00000000;
+      constexpr uint32_t SRAM_REGION_START = 0x1FFF8000;
+      constexpr uint32_t PERIPH_REGION_START = 0x40008000;
+      //constexpr uint32_t PERIPH_REGION_END = 0xFFFFFFFF;
+
+      uint8_t tex_s_c_b = 0;
+      if (/*address >= FLASH_REGION_START &&*/ base_address < SRAM_REGION_START)
+      {
+        // FLASH
+        // normal memory, non-shareable, write-through
+        // TEX = 0b000, C = 1, B = 0, S = 0
+        tex_s_c_b = 0x2;
+      }
+      else if (/*address >= SRAM_REGION_START &&*/ base_address < PERIPH_REGION_START)
+      {
+        // SRAM
+        // normal memory, shareable, write-through
+        // TEX = 0b000, C = 1, B = 0, S = 1
+        tex_s_c_b = 0x6;
+      }
+      else /*if (address >= PERIPH_REGION_START && address <= PERIPH_REGION_END)*/
+      {
+        // PERIPHERALS
+        // device memory, non-cacheable, non-bufferable
+        // TEX = 0b000, C = 0, B = 1, S = 1
+        tex_s_c_b = 0x5;
+      }
+
+      // shift the TEX, S, C, B bits to the correct position
+      return tex_s_c_b << MPU_RASR_B_Pos;
+    }
+
+    /**
      * @brief Build a region configuration.
      * @param base_address The base address of the region.
      * @param size The size of the region, as power of 2.
@@ -166,10 +211,14 @@ namespace mpu
       static_assert((base_address & MPU_RBAR_ADDR_Msk) == base_address, "base address not aligned!");
       static_assert((base_address & ((1 << size) - 1)) == 0, "base address not aligned to region size!");
 
+      constexpr uint32_t tex_s_c_b = get_tex_scb(base_address);
+      static_assert(tex_s_c_b != 0, "unsupported region base address - TEX S C B fail!");
+
       return {
           .base_address = base_address,
           .size = size,
           .access_permissions = access_permissions,
+          .tex_s_c_b = tex_s_c_b,
           .allow_execute = allow_execute};
     }
   }
