@@ -125,13 +125,25 @@ namespace mpu
     /**
      * @brief Get the size of the region for use in config.size.
      * @param size_bytes The size of the region in bytes.
+     * @param allow_overshoot Allow the region size to be larger than the requested size?
+     *                        If false, the region size may be smaller than the requested size.
      * @return The size of the region in for use in config.size.
      */
-    constexpr uint8_t get_size(const uint32_t size_bytes)
+    constexpr uint8_t get_size(const uint32_t size_bytes, const bool allow_overshoot = false)
     {
+      // get the smallest power of 2 that is greater or equal to the size
       uint8_t size = 1;
       while((1ul << size) < size_bytes) {
         size++;
+      }
+
+      // if the size is larger than the requested size, reduce it by 1
+      // unless overshoot is allowed
+      if (!allow_overshoot) {
+        if ((1ul << size) > size_bytes)
+        {
+          size--;
+        }
       }
 
       return size;
