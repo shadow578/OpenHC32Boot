@@ -23,17 +23,23 @@ namespace dwin
     constexpr uint8_t tail[] = { 0xCC, 0x33, 0xC3, 0x3C };
 
     /**
-     * @brief microseconds inserted between bytes sent to the screen. 
-     * @note 0 to disable
+     * @brief delays for different operations.
+     * @note set to 0 to disable
      */
-    constexpr uint32_t byte_tx_delay = 1;
+    namespace delays
+    {
+      constexpr uint32_t byte_tx = 1; // us
 
-    /**
-     * @brief milliseconds to wait for a response from the screen, if not using RX
-     * @note 0 to disable 
-     */
-    constexpr uint32_t response_delay = 50;
-  }
+      constexpr uint32_t init = 250; // ms
+      constexpr uint32_t fill_screen = 100; // ms
+      constexpr uint32_t redraw = 10; // ms
+      constexpr uint32_t set_brightness = 0; // ms
+      constexpr uint32_t set_orientation = 0; // ms
+      constexpr uint32_t draw_rectangle = 5; // ms
+      constexpr uint32_t draw_string = 5; // ms
+      constexpr uint32_t move_screen_area = 25; // ms
+    } // namespace delays
+  } // namespace constants
 
   struct rectangle
   {

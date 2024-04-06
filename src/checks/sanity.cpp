@@ -40,17 +40,9 @@ constexpr gpio::pin_t sdio_pins[] = SDIO_PINS;
 constexpr gpio::pin_t loose_pins[] = {
   #if HAS_SERIAL(HOST_SERIAL)
     HOST_SERIAL_TX,
-
-    #if defined(HOST_SERIAL_RX)
-      HOST_SERIAL_RX,
-    #endif
   #endif
   #if HAS_SERIAL(SCREEN_SERIAL)
     SCREEN_SERIAL_TX,
-
-    #if defined(SCREEN_SERIAL_RX)
-      SCREEN_SERIAL_RX,
-    #endif
   #endif
   #if defined(BEEPER_PIN)
     BEEPER_PIN,

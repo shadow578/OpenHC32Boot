@@ -7,34 +7,7 @@
 
 namespace dwin
 {
-  /**
-   * @brief wait for dwin response
-   * @return true if response received, false otherwise
-   */
-  bool await_response()
-  {
-    #if defined(SCREEN_SERIAL_RX)
-      constexpr size_t read_buffer_size = 16;
-
-      // read up to 16 bytes from serial
-      uint8_t read_buffer[read_buffer_size];
-      const size_t received = screenSerial.read(read_buffer, read_buffer_size);
-
-      // check for response
-      return ( received >= 3
-          && read_buffer[0] == constants::FHONE
-          && read_buffer[1] == '\0'
-          && read_buffer[2] == 'O'
-          && read_buffer[3] == 'K' );
-    #else
-      if (constants::response_delay != 0)
-      {
-        delay::ms(constants::response_delay);
-      }
-
-      return true;
-    #endif
-  }
+  #define OPERATION_DELAY(value) if (value != 0) { delay::ms(value); }
 
   /**
    * @brief send data to the DWIN screen
@@ -46,9 +19,9 @@ namespace dwin
     #define PUT(ch)                                         \
       {                                                     \
         screenSerial.put(ch);                               \
-        if (constants::byte_tx_delay != 0)                  \
+        if (constants::delays::byte_tx != 0)                \
         {                                                   \
-          delay::us(constants::byte_tx_delay);              \
+          delay::us(constants::delays::byte_tx);            \
         }                                                   \
       }
 
@@ -68,12 +41,6 @@ namespace dwin
     for (const uint8_t ch : constants::tail)
     {
       PUT(ch);
-    }
-
-    // wait for response
-    if (!await_response())
-    {
-      //logging::debug("DWIN response not received");
     }
   }
 
@@ -98,6 +65,8 @@ namespace dwin
 
     // send handshake, don't care about response
     sendc(0x00);
+    OPERATION_DELAY(constants::delays::init);
+
     redraw();
   }
 
@@ -107,13 +76,15 @@ namespace dwin
       0x01, // cmd: clear screen
       DWIN_WORD(color),
     );
+
+    OPERATION_DELAY(constants::delays::fill_screen);
   }
 
   void redraw()
   {
     sendc(0x3D); // cmd: update screen
 
-    //TODO: have to wait for the screen to finish ?
+    OPERATION_DELAY(constants::delays::redraw);
   }
 
   void set_brightness(const uint8_t brightness)
@@ -122,6 +93,8 @@ namespace dwin
       0x30, // cmd: set brightness
       brightness
     );
+
+    OPERATION_DELAY(constants::delays::set_brightness);
   }
 
   void set_orientation(const screen_orientation orientation)
@@ -132,6 +105,8 @@ namespace dwin
       0xA5, // ?
       static_cast<uint8_t>(orientation)
     );
+
+    OPERATION_DELAY(constants::delays::set_orientation);
   }
 
   void draw_rectangle(
@@ -148,6 +123,8 @@ namespace dwin
       DWIN_WORD(rectangle.x_end()),   // x end (bottom right corner)
       DWIN_WORD(rectangle.y_end()),   // y end
     );
+
+    OPERATION_DELAY(constants::delays::draw_rectangle);
   }
 
   size_t draw_string(
@@ -183,6 +160,8 @@ namespace dwin
     // send data
     send(data, data_len);
 
+    OPERATION_DELAY(constants::delays::draw_string);
+
     return str_len;
   }
   
@@ -202,5 +181,7 @@ namespace dwin
       DWIN_WORD(area.x_end()),                        // x end (bottom right corner)
       DWIN_WORD(area.y_end()),                        // y end
     );
+
+    OPERATION_DELAY(constants::delays::move_screen_area);
   }
 } // namespace dwin

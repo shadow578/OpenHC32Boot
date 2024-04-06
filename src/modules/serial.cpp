@@ -43,13 +43,8 @@ void Serial::init(uint32_t baudrate)
   // disable and de-init usart peripheral
   deinit();
 
-  // set rx and tx pins
+  // set tx pin
   PORT_SetFunc(tx_pin.port, tx_pin.pin, USART_DEV_TO_TX_FUNC(peripheral), Disable);
-
-  if (has_rx)
-  {
-    PORT_SetFunc(rx_pin.port, rx_pin.pin, USART_DEV_TO_RX_FUNC(peripheral), Disable);
-  }
 
   // enable USART clock
   PWC_Fcg1PeriphClockCmd(USART_DEV_TO_PERIPH_CLOCK(peripheral), Enable);
@@ -57,12 +52,6 @@ void Serial::init(uint32_t baudrate)
   // initialize USART peripheral and set baudrate
   USART_UART_Init(peripheral, &usart_config);
   SetUartBaudrate(peripheral, baudrate);
-
-  // enable RX function
-  if (has_rx)
-  {
-    USART_FuncCmd(peripheral, UsartRx, Enable);
-  }
 }
 
 void Serial::deinit()
@@ -99,41 +88,10 @@ void Serial::write(const char *str)
   }
 }
 
-size_t Serial::read(uint8_t *buffer, const size_t length, const uint16_t timeout)
-{
-  ASSERT(has_rx, "this Serial instance does not support reading");
-
-  size_t read_bytes = 0;
-  for (; read_bytes < length; read_bytes++)
-  {
-    // wait until RX buffer is not empty
-    uint32_t time = 0;
-    while (USART_GetStatus(peripheral, UsartRxNoEmpty) != Set)
-    {
-      delay::us(1);
-      time++;
-      if (time > (timeout * 1000))
-      {
-        // timeout reached, return however many bytes were read
-        return read_bytes;
-      }
-    }
-
-    // buffer full, read the byte
-    buffer[read_bytes] = static_cast<uint8_t>(USART_RecData(peripheral));
-    read_bytes++;
-  }
-
-  return read_bytes;
-}
-
 #if HAS_SERIAL(HOST_SERIAL)
   Serial hostSerial(
     CONCAT(M4_USART, HOST_SERIAL), 
     HOST_SERIAL_TX
-    #if defined(HOST_SERIAL_RX)
-      , HOST_SERIAL_RX
-    #endif
   );
 #endif
 
@@ -141,8 +99,5 @@ size_t Serial::read(uint8_t *buffer, const size_t length, const uint16_t timeout
   Serial screenSerial(
     CONCAT(M4_USART, SCREEN_SERIAL), 
     SCREEN_SERIAL_TX
-    #if defined(SCREEN_SERIAL_RX)
-      , SCREEN_SERIAL_RX
-    #endif
   );
 #endif
