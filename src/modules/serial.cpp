@@ -65,6 +65,9 @@ void Serial::deinit()
     //USART_FuncCmd(peripheral, UsartTxCmpltInt, Disable);
 
     USART_DeInit(peripheral);
+
+    // disable USART clock
+    PWC_Fcg1PeriphClockCmd(USART_DEV_TO_PERIPH_CLOCK(peripheral), Disable);
   #endif
 }
 
