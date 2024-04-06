@@ -72,7 +72,7 @@ namespace flash
        */
       static constexpr uint32_t get_start_address(const uint32_t flash_end_address)
       {
-        uint32_t address =  flash_end_address - (get_word_count() * 4);
+        uint32_t address = flash_end_address - (get_word_count() * 4);
 
         // address must be aligned to the nearest word
         // so round down to the nearest word
@@ -104,16 +104,7 @@ namespace flash
        */
       static const update_metadata *get_stored()
       {
-        // get the metadata from the flash
-        const uint32_t *metadata = reinterpret_cast<const uint32_t *>(get_start_address(get_flash_size()));
-
-        // check if the metadata is valid
-        if (metadata[0] == 0xFFFFFFFF)
-        {
-          return nullptr;
-        }
-
-        return reinterpret_cast<const update_metadata *>(metadata);
+        return reinterpret_cast<const update_metadata *>(get_start_address(get_flash_size() - 1));
       }
   
     #endif // STORE_UPDATE_METADATA == 1
@@ -126,9 +117,9 @@ namespace flash
     const bool matches_stored() const
     {
       #if STORE_UPDATE_METADATA == 1
-        const uint8_t *this_data = reinterpret_cast<const uint8_t *>(this);
-        const uint8_t *stored_data = reinterpret_cast<const uint8_t *>(get_stored()); 
-        return stored_data != nullptr && std::equal(this_data, this_data + sizeof(update_metadata), stored_data);
+        const uint32_t *this_data = this->get_data();
+        const uint32_t *stored_data = get_stored()->get_data();
+        return stored_data != nullptr && std::equal(this_data, this_data + get_word_count(), stored_data);
       #else
         return true;
       #endif
