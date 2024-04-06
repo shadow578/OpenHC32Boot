@@ -30,13 +30,17 @@ void on_progress(const flash::update_stage stage, const int done, const int tota
   // print the status to the screen
   screen.showProgress(done, total, status_str);
   screen.flush();
-
-  // short blip
-  beep::beep(10, 1);
 }
 
 int main()
 {
+  #if WAIT_FOR_DEBUGGER == 1
+    while ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) == 0)
+    {
+      __NOP();
+    }
+  #endif
+
   // initialize system
   fault_handler::init();
   sysclock::apply();

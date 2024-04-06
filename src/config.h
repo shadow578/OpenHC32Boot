@@ -88,3 +88,6 @@
 
 // skip restoring the clock configuration before jumping to the application
 #define SKIP_CLOCK_RESTORE 0
+
+// wait for a debugger to be attached before running the bootloader
+#define WAIT_FOR_DEBUGGER 0
