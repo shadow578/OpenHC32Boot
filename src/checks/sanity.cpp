@@ -25,8 +25,12 @@ static_assert(flash::total_size == (256 * 1024) || flash::total_size == (512 * 1
 #endif
 
 // serial peripherals should be valid
-static_assert(is_valid_usart(HOST_SERIAL, true), "HOST_SERIAL must be a valid USART");
-static_assert(is_valid_usart(SCREEN_SERIAL, true), "SCREEN_SERIAL must be a valid USART");
+#if HAS_SERIAL(HOST_SERIAL)
+  static_assert(is_valid_usart(HOST_SERIAL, true), "HOST_SERIAL must be a valid USART");
+#endif
+#if HAS_SERIAL(SCREEN_SERIAL)
+  static_assert(is_valid_usart(SCREEN_SERIAL, true), "SCREEN_SERIAL must be a valid USART");
+#endif
 
 // host serial should use a valid and tested baud rate
 constexpr int host_allowed_baud_rates[] = {

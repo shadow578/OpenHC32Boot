@@ -3,6 +3,10 @@
 #include <stdio.h>
 #include "../../../config.h"
 
+#ifndef SCREEN_DIMENSIONS
+  #define SCREEN_DIMENSIONS { 0, 0 }
+#endif
+
 namespace dwin
 {
   namespace constants

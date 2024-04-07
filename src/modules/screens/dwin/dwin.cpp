@@ -5,6 +5,8 @@
 #include "../../../util.h"
 #include <algorithm>
 
+extern Serial screenSerial; // required if using SCREEN_NONE
+
 namespace dwin
 {
   #define OPERATION_DELAY(value) if (value != 0) { delay::ms(value); }

@@ -1,6 +1,10 @@
 #include "DwinScreen.h"
 #include "../../../util.h"
 
+#ifndef SCREEN_ORIENTATION
+  #define SCREEN_ORIENTATION portrait
+#endif
+
 constexpr dwin::color::color font_color = dwin::color::white;
 constexpr dwin::font_size::font_size_t font_size = dwin::font_size::pt16;
 
