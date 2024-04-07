@@ -58,3 +58,42 @@ jobs:
       uses: re-actors/alls-green@release/v1
       with:
         jobs: ${{ toJSON(needs) }}
+  
+  # check all environments in one go
+  check:
+    runs-on: ubuntu-latest
+
+    # only run checks if all builds succeeded
+    # no sense in checking for potentially small defects 
+    # if the project doesn't even build
+    needs: [all_build]
+
+    steps:
+      # checkout the repository
+      - uses: actions/checkout@v4
+      
+      # enable caching of pip and platformio
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+      
+      # install python
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      # install platformio
+      - name: Install PlatformIO core
+        run: pip install --upgrade platformio
+      
+      # print the build environment name
+      - name: Print matrix value for 'environment'
+        run: echo ${{ matrix.environment }}
+
+      # check all environments in one go
+      # fail even on low defects - all defects should be fixed or at least acknowledged
+      - name: Check all environments
+        run: pio check --fail-on-defect=low
