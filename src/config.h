@@ -38,7 +38,7 @@
 
 // delete the firmware update file after flashing?
 // possible values: [ 0, 1 ]
-#define DELETE_FIRMEWARE_UPDATE_FILE 1
+#define DELETE_FIRMEWARE_UPDATE_FILE 0
 
 // store last update metadata in flash
 #define STORE_UPDATE_METADATA 1
@@ -48,7 +48,7 @@
 #define METADATA_HASH HASH_SHA256
 
 // path of the firmware update file
-#define FIRMWARE_UPDATE_FILE "update.bin"
+#define FIRMWARE_UPDATE_FILE "firmware.bin"
 
 // base address of the application
 #define APP_BASE_ADDRESS 0xC000ul
