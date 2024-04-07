@@ -54,7 +54,7 @@ en_result_t SetUartBaudrate_FP(M4_USART_TypeDef *USARTx, const uint32_t baudrate
   uint32_t div_fract = 0xFFFFFFFF;
   if ((C % (baudrate * 8 * (2 - OVER8))) != 0)
   {
-    const uint64_t fractTmp = ((2 - OVER8) * (div_int + 1) * baudrate);
+    const uint64_t fractTmp = (static_cast<uint64_t>(2 - OVER8) * static_cast<uint64_t>(div_int + 1) * static_cast<uint64_t>(baudrate));
     div_fract = (2048 * fractTmp / C) - 128;
 
     if (div_fract > 0x7F)

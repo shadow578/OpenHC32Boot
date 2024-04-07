@@ -120,6 +120,7 @@ namespace leap
        */
       bool nvic_vectors_seem_valid(const vector_table_t *app_vector_table)
       {
+        // cppcheck-suppress useStlAlgorithm -- std::all_of uses more memory than this loop
         for (const irq_vector_t &vector : app_vector_table->irqs)
         {
           if (!helper::is_valid_interrupt_vector(vector))

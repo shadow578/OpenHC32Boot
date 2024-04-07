@@ -3,9 +3,10 @@
 #include <algorithm>
 
 template <typename T, int N>
-constexpr bool contains(T (&arr)[N], T &element)
+constexpr bool contains(const T (&arr)[N], const T &element)
 {
-  for (auto other : arr) 
+  // cppcheck-suppress useStlAlgorithm -- std::any_of is only constexpr in C++20 and later
+  for (auto &other : arr)
   {
     if (other == element) 
     {
@@ -17,8 +18,9 @@ constexpr bool contains(T (&arr)[N], T &element)
 }
 
 template <typename T, int N, int M>
-constexpr bool containsAny(T (&arr1)[N], T (&arr2)[M])
+constexpr bool containsAny(const T (&arr1)[N], const T (&arr2)[M])
 {
+  // cppcheck-suppress useStlAlgorithm -- std::any_of is only constexpr in C++20 and later
   for (auto &other : arr1) 
   {
     if (contains(arr2, other)) 
@@ -31,7 +33,7 @@ constexpr bool containsAny(T (&arr1)[N], T (&arr2)[M])
 }
 
 template <typename T, int N>
-constexpr bool has_duplicates(T (&arr)[N])
+constexpr bool has_duplicates(const T (&arr)[N])
 {
   for (size_t i = 0; i < N; ++i) 
   {

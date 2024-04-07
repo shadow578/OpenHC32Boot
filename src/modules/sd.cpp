@@ -94,7 +94,7 @@ namespace sd
       // assume everything is ok
       // if the file is more than 0 bytes
       const DWORD file_size = f_size(&file);
-      if (file_size <= 0)
+      if (file_size == 0)
       {
         return false;
       }

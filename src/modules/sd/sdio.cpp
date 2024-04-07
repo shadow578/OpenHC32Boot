@@ -245,11 +245,11 @@ extern "C" DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buff)
   case GET_SECTOR_COUNT:
     // get sector count
     // in DDL, they are called "blocks"
-    *(LBA_t *)buff = handle->stcSdCardInfo.u32LogBlockNbr;
+    *(reinterpret_cast<LBA_t*>(buff)) = handle->stcSdCardInfo.u32LogBlockNbr;
     return RES_OK;
   case GET_SECTOR_SIZE:
     // get sector size
-    *(WORD *)buff = handle->stcSdCardInfo.u32LogBlockSize;
+    *(reinterpret_cast<WORD*>(buff)) = handle->stcSdCardInfo.u32LogBlockSize;
     return RES_OK;
   //case GET_BLOCK_SIZE:
   //  // get block size

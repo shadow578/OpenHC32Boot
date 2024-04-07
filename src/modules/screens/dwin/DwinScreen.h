@@ -6,9 +6,10 @@
 /**
  * @brief DWIN screen implementation
  */
+// cppcheck-suppress noConstructor -- cursor_x and cursor_y are initialized in clear(), which is called by init()
 class DwinScreen : public Screen
 {
-public: 
+public:
   void init() override;
   void clear() override;
   void write(const char *str) override;
@@ -17,7 +18,4 @@ public:
 
 private:
   uint16_t cursor_x, cursor_y;
-
-  dwin::rectangle text_area;
-  dwin::rectangle progress_bar_area;
 };

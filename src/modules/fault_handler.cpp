@@ -30,7 +30,6 @@ typedef union hardfault_stack_frame_t
         uint32_t pc;
         uint32_t psr;
     };
-    uint32_t raw[8];
 } hardfault_stack_frame_t;
 
 void fault_handler::init()
@@ -44,7 +43,7 @@ void fault_handler::init()
 /**
  * @brief print hardfault stack frame to panic output
  */
-void print_stack_frame(hardfault_stack_frame_t *stack_frame)
+void print_stack_frame(const hardfault_stack_frame_t *stack_frame)
 {
     LOG_REGISTER("R0 = ", stack_frame->r0);
     LOG_REGISTER("R1 = ", stack_frame->r1);
@@ -59,7 +58,7 @@ void print_stack_frame(hardfault_stack_frame_t *stack_frame)
 /**
  * @brief hard fault handler in C, called by assembly wrapper
  */
-extern "C" void HardFault_Handler_C(hardfault_stack_frame_t *stack_frame, uint32_t lr_value)
+extern "C" void HardFault_Handler_C(const hardfault_stack_frame_t *stack_frame, const uint32_t lr_value)
 {
     // print panic message:
     // - header

@@ -13,19 +13,17 @@ constexpr dwin::color::color progress_bar_color = dwin::color::green;
 constexpr dwin::color::color progress_bar_background_color = dwin::color::black;
 constexpr dwin::color::color progress_bar_outline_color = dwin::color::white;
 
+constexpr dwin::screen_orientation orientation = dwin::screen_orientation::SCREEN_ORIENTATION;
+constexpr dwin::rectangle screen_area = dwin::get_screen_area(orientation);
+constexpr dwin::rectangle text_area = {0, 0, screen_area.width, screen_area.height - progress_bar_height - progress_bar_padding_top};
+constexpr dwin::rectangle progress_bar_area = {0, screen_area.height - progress_bar_height, screen_area.width, progress_bar_height - 1}; // -1 to avoid screen wrap-around
+
 void DwinScreen::init()
 {
   dwin::init();
-
-  dwin::screen_orientation orientation = dwin::screen_orientation::SCREEN_ORIENTATION;
   dwin::set_orientation(orientation);
-
   clear();
   flush();
-
-  const dwin::rectangle screen_area = dwin::get_screen_area(orientation);
-  text_area = {0, 0, screen_area.width, screen_area.height - progress_bar_height - progress_bar_padding_top};
-  progress_bar_area = {0, screen_area.height - progress_bar_height, screen_area.width, progress_bar_height - 1}; // -1 to avoid screen wrap-around
 }
 
 void DwinScreen::clear()
