@@ -26,6 +26,51 @@
     : usart == M4_USART3 ? PWC_FCG1_PERIPH_USART3 \
                          : PWC_FCG1_PERIPH_USART4
 
+/**
+ * @brief Set the baudrate of the USART peripheral
+ * @param USARTx pointer to USART peripheral
+ * @param baudrate desired baudrate
+ * @return en_result_t Ok if successful, ErrorInvalidParameter otherwise
+ * 
+ * @note copy of SetUartBaudrate in hc32f460_usart.c, but utilizing fixed point math instad of float
+ */
+en_result_t SetUartBaudrate_FP(M4_USART_TypeDef *USARTx, const uint32_t baudrate)
+{
+  // get base clock frequency
+  const uint32_t C = SystemCoreClock / (1ul << (2ul * USARTx->PR_f.PSC));
+  ASSERT(C > 0, "USART peripheral clock is zero");
+
+  // get OVER8 oversampling setting
+  const uint32_t OVER8 = USARTx->CR1_f.OVER8;
+
+  // calculate integer part of divider
+  const uint32_t div_int = (C / (baudrate * 8 * (2 - OVER8))) - 1;
+  if (div_int > 0xFF)
+  {
+    return ErrorInvalidParameter;
+  }
+
+  // calculate fractional part of divider only if deviation is not negligible
+  uint32_t div_fract = 0xFFFFFFFF;
+  if ((C % (baudrate * 8 * (2 - OVER8))) != 0)
+  {
+    const uint64_t fractTmp = ((2 - OVER8) * (div_int + 1) * baudrate);
+    div_fract = (2048 * fractTmp / C) - 128;
+
+    if (div_fract > 0x7F)
+    {
+      return ErrorInvalidParameter;
+    }
+  }
+
+  // set baudrate registers
+  USARTx->CR1_f.FBME = div_fract > 0x7F ? 0ul : 1ul;
+  USARTx->BRR_f.DIV_FRACTION = div_fract;
+  USARTx->BRR_f.DIV_INTEGER = div_int;
+  return Ok;
+}
+
+
 void Serial::init(uint32_t baudrate)
 {
   const stc_usart_uart_init_t usart_config = {
@@ -51,7 +96,7 @@ void Serial::init(uint32_t baudrate)
 
   // initialize USART peripheral and set baudrate
   USART_UART_Init(peripheral, &usart_config);
-  SetUartBaudrate(peripheral, baudrate);
+  SetUartBaudrate_FP(peripheral, baudrate);
 }
 
 void Serial::deinit()
