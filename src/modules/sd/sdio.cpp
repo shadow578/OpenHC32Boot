@@ -199,7 +199,7 @@ extern "C" DRESULT disk_write(BYTE pdrv, const BYTE *buff, LBA_t sector, UINT co
   }
 
   // write sectors
-  en_result_t rc = SDCARD_WriteBlocks(handle, sector, count, (uint8_t *)buff, sdio::write_timeout);
+  en_result_t rc = SDCARD_WriteBlocks(handle, sector, count, const_cast<uint8_t *>(buff), sdio::write_timeout);
   if (rc == Ok)
   {
     return RES_OK;
