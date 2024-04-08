@@ -12,7 +12,6 @@
  * - https://www.keil.com/appnotes/files/apnt209.pdf
  */
 #include <hc32_ddl.h>
-#include <cstdio>
 #include "log.h"
 
 #define LOG_REGISTER(message, register) logging::log(message "0x"); logging::log(register, 16); logging::log("\n");

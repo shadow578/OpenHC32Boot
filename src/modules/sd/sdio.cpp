@@ -1,7 +1,6 @@
 #include "sdio.h"
 #include "../log.h"
 #include <sd_card.h>
-#include <cstdio>
 
 #include "fatfs/ff.h"
 #include "fatfs/diskio.h"

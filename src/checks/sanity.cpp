@@ -2,8 +2,7 @@
 #include "pins_helper.h"
 #include "serial_helper.h"
 #include "common.h"
-#include "modules/flash.h"
-#include "modules/sd/sdio.h"
+#include "../modules.h"
 
 // APP_BASE_ADDRESS must align to the following:
 // - next power of 2 after the vector table size (= 1024 bytes)

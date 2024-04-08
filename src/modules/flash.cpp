@@ -1,5 +1,4 @@
 #include "flash.h"
-#include <cstdio>
 #include <hc32_ddl.h>
 #include "log.h"
 

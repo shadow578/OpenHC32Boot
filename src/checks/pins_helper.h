@@ -1,5 +1,5 @@
 #pragma once
-#include "../modules.h"
+#include "../modules/gpio.h"
 
 constexpr bool operator ==(const gpio::pin_t &first, const gpio::pin_t &other) 
 {

@@ -1,5 +1,4 @@
 #include <hc32_ddl.h>
-#include <cstdio>
 #include "modules.h"
 
 void on_progress(const flash::update_stage stage, const int done, const int total)
