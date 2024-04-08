@@ -53,12 +53,13 @@ jobs:
       - name: Build environment
         run: export PLATFORMIO_BUILD_FLAGS="-DCONFIG_PROFILE=CONFIG_PROFILE_${{ matrix.profile }} -DBOARD=BOARD_${{ matrix.board }}" ; pio run --environment ${{ matrix.environment }}
 
-      # upload the firmware binary
+      # upload the firmware binary only when building on the main branch
       - name: Upload firmware binary
         uses: actions/upload-artifact@v4
         with:
           name: OpenHC32Boot-${{ matrix.environment }}-${{ matrix.board }}-${{ matrix.profile }}
           path: .pio/build/${{ matrix.environment }}/firmware.bin
+        if: github.ref == 'refs/heads/main'
   
   # dummy job after all environments were build
   all_build:
