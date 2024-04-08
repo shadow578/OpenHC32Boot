@@ -1,6 +1,7 @@
 #pragma once
 #include "sd/fatfs/ff.h"
 #include "hash.h"
+#include "chipid.h"
 #include <algorithm>
 
 namespace flash
@@ -12,7 +13,6 @@ namespace flash
 
   constexpr uint32_t erase_sector_size = 8192; // 8Kb
   constexpr uint32_t file_buffer_size = 512;   // 512 bytes
-  constexpr uint32_t total_size = (LD_FLASH_SIZE + LD_FLASH_START);
 
   static_assert(file_buffer_size % 4 == 0, "file buffer size must be aligned to 32-bit words");
 
@@ -28,8 +28,15 @@ namespace flash
    */
   constexpr uint32_t get_flash_size()
   {
-    //TODO auto-detect the flash size
-    return total_size;
+    switch (chipid::variant::get_variant())
+    {
+    case chipid::variant::HC32F460C:
+      return 0x40000;
+    case chipid::variant::HC32F460E:
+      return 0x80000;
+      default:
+      return 0;
+    }
   }
 
   struct update_metadata

@@ -9,3 +9,5 @@
   template<typename T, int N>
   constexpr int countof(T(&)[N]) { return N; }
 #endif
+
+#define STRINGIFY(x) #x

@@ -14,9 +14,6 @@ static_assert((APP_BASE_ADDRESS & (flash::erase_sector_size - 1)) == 0, "APP_BAS
 // including any offset for the bootloader region
 static_assert(APP_BASE_ADDRESS >= (LD_FLASH_START + APP_BASE_ADDRESS), "APP_BASE_ADDRESS must be after the bootloader region");
 
-// total flash size must be valid
-static_assert(flash::total_size == (256 * 1024) || flash::total_size == (512 * 1024), "total flash size must be 256 or 512 KBytes");
-
 // serial peripherals should not be duplicated
 // only valid if both are enabled
 #if HAS_SERIAL(HOST_SERIAL) && HAS_SERIAL(SCREEN_SERIAL)
