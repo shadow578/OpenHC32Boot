@@ -7,7 +7,7 @@
 #include "modules/sd.h"
 #include "modules/serial.h"
 #include "modules/log.h"
-#include "modules/cpuid.h"
+#include "modules/chipid.h"
 #include "modules/beep.h"
 #include "modules/mpu.h"
 #include "modules/sysclock.h"

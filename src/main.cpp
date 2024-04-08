@@ -66,8 +66,8 @@ int main()
   logging::log("OpenHC32Boot " BOOTLOADER_VERSION "\n");
   beep::beep(100);
 
-  #if PRINT_CPUID == 1
-    cpuid::print();
+  #if PRINT_CHIPID == 1
+    chipid::print();
   #endif
 
   // get the firmware file

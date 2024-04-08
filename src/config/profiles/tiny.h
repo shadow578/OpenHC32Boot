@@ -31,9 +31,9 @@
   #define LOG_LEVEL LOG_LEVEL_NONE
 #endif
 
-// don't print CPUID
-#ifndef PRINT_CPUID
-  #define PRINT_CPUID 0
+// don't print chip ID
+#ifndef PRINT_CHIPID
+  #define PRINT_CHIPID 0
 #endif
 
 // disable the fault handler, removing the fault handler code

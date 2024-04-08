@@ -54,9 +54,9 @@
   #define LOG_LEVEL LOG_LEVEL_DEBUG
 #endif
 
-// enable printing CPUID
-#ifndef PRINT_CPUID
-  #define PRINT_CPUID 1
+// enable printing chip ID
+#ifndef PRINT_CHIPID
+  #define PRINT_CHIPID 1
 #endif
 
 // enable the fault handler

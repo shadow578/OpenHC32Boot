@@ -1,8 +1,8 @@
-#include "cpuid.h"
+#include "chipid.h"
 #include <hc32_ddl.h>
 #include "log.h"
 
-namespace cpuid
+namespace chipid
 {
   void print()
   {

@@ -60,8 +60,8 @@
 // possible values: [ DEBUG, INFO, ERROR, OFF ]
 //define LOG_LEVEL LOG_LEVEL_DEBUG
 
-// print the CPUID information
-//define PRINT_CPUID 1
+// print the chip ID information
+//define PRINT_CHIPID 1
 
 // beeper pin assignment
 // if not defined, the beeper is disabled
