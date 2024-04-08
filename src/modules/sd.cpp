@@ -140,7 +140,7 @@ namespace sd
         // don't care for error here
       }
   
-      #if DELETE_FIRMEWARE_UPDATE_FILE == 1
+      #if DELETE_FIRMWARE_UPDATE_FILE == 1
         res = f_unlink(path);
         if (res != FR_OK)
         {

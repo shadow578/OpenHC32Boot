@@ -52,6 +52,3 @@
 #define COMPAT_DBG_JTDO   (1ul << 2)
 #define COMPAT_DBG_JTDI   (1ul << 3)
 #define COMPAT_DBG_NJTRST (1ul << 4)
-
-// Voxelab Aquila X2 bootloader disables JTDO, JTDI, and NJTRST
-#define COMPAT_DBG_VOXELAB_AQUILA_X2 (COMPAT_DBG_JTDO | COMPAT_DBG_JTDI | COMPAT_DBG_NJTRST)

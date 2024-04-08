@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------/
 /  Configurations of FatFs Module
 /---------------------------------------------------------------------------*/
-#include "../../../config.h" // for DELETE_FIRMEWARE_UPDATE_FILE
+#include "../../../config.h" // for DELETE_FIRMWARE_UPDATE_FILE
 
 #define FFCONF_DEF	80286	/* Revision ID */
 
@@ -9,9 +9,9 @@
 / Function Configurations
 /---------------------------------------------------------------------------*/
 
-// note: f_unlink is the only write operation, so we can disable all write operations if DELETE_FIRMEWARE_UPDATE_FILE is set
+// note: f_unlink is the only write operation, so we can disable all write operations if DELETE_FIRMWARE_UPDATE_FILE is set
 
-#define FF_FS_READONLY	(DELETE_FIRMEWARE_UPDATE_FILE == 1 ? 0 : 1) 
+#define FF_FS_READONLY	(DELETE_FIRMWARE_UPDATE_FILE == 1 ? 0 : 1) 
 /* This option switches read-only configuration. (0:Read/Write or 1:Read-only)
 /  Read-only configuration removes writing API functions, f_write(), f_sync(),
 /  f_unlink(), f_mkdir(), f_chmod(), f_rename(), f_truncate(), f_getfree()
