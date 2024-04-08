@@ -9,7 +9,10 @@ on:
       - main
 
 jobs:
-  # build all environments
+  # build in a matrix and upload binary artifacts
+  # - all environments
+  # - all profiles
+  # - all boards
   build:
     runs-on: ubuntu-latest
 
@@ -18,6 +21,8 @@ jobs:
       fail-fast: false
       matrix:
         environment: [ "HC32F460C", "HC32F460E" ]
+        profile: [ "FULL", "TINY", "SMALL" ]
+        board: [ "VOXELAB_V101" ]
 
     steps:
       # checkout the repository
@@ -41,12 +46,19 @@ jobs:
         run: pip install --upgrade platformio
       
       # print the build environment name
-      - name: Print matrix value for 'environment'
-        run: echo ${{ matrix.environment }}
+      - name: Print matrix configuration
+        run: echo "environment = ${{ matrix.environment }}; profile = ${{ matrix.profile }}; board = ${{ matrix.board }}"
 
-      # build the environment
+      # build the environment with the given profile and board
       - name: Build environment
-        run: pio run --environment ${{ matrix.environment }}
+        run: export PLATFORMIO_BUILD_FLAGS="-DCONFIG_PROFILE=CONFIG_PROFILE_${{ matrix.profile }} -DBOARD=BOARD_${{ matrix.board }}" ; pio run --environment ${{ matrix.environment }}
+
+      # upload the firmware binary
+      - name: Upload firmware binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenHC32Boot-${{ matrix.environment }}-${{ matrix.board }}-${{ matrix.profile }}
+          path: .pio/build/${{ matrix.environment }}/firmware.bin
   
   # dummy job after all environments were build
   all_build:
