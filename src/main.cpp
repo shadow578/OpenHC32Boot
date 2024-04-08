@@ -1,5 +1,6 @@
 #include <hc32_ddl.h>
 #include "modules.h"
+#include "checks/runtime.h"
 
 void on_progress(const flash::update_stage stage, const int done, const int total)
 {
@@ -39,6 +40,8 @@ int main()
       __NOP();
     }
   #endif
+
+  runtime_checks::run();
 
   // initialize system
   fault_handler::init();
