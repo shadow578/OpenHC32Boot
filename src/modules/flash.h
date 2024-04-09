@@ -33,8 +33,11 @@ namespace flash
     case chipid::variant::HC32F460C:
       return 0x40000;
     case chipid::variant::HC32F460E:
-      return 0x80000;
-      default:
+      // according to HC32F460 reference manual, section 7.3 "Embedded FLASH", 
+      // the last 32 bytes of flash (0x7FFE0 - 0x7FFFF) are reserved and cannot
+      // be programmed.
+      return 0x80000 - 32;
+    default:
       return 0;
     }
   }
