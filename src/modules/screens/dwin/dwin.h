@@ -27,6 +27,11 @@ namespace dwin
     constexpr uint8_t tail[] = { 0xCC, 0x33, 0xC3, 0x3C };
 
     /**
+     * @brief number of retries for initialization
+     */
+    constexpr uint32_t init_retries = 3;
+
+    /**
      * @brief delays for different operations.
      * @note set to 0 to disable
      */
@@ -34,7 +39,7 @@ namespace dwin
     {
       constexpr uint32_t byte_tx = 1; // us
 
-      constexpr uint32_t init = 250; // ms
+      constexpr uint32_t init = 500; // ms
       constexpr uint32_t fill_screen = 100; // ms
       constexpr uint32_t redraw = 10; // ms
       constexpr uint32_t set_brightness = 0; // ms

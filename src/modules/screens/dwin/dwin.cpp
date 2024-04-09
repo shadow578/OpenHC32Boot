@@ -66,8 +66,11 @@ namespace dwin
     screenSerial.init(115200);
 
     // send handshake, don't care about response
-    sendc(0x00);
-    OPERATION_DELAY(constants::delays::init);
+    for (uint32_t i = 0; i < constants::init_retries; i++)
+    {
+      sendc(0x00);
+      OPERATION_DELAY(constants::delays::init);
+    }
 
     redraw();
   }
