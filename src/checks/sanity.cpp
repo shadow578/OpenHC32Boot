@@ -53,6 +53,19 @@ static_assert(!has_duplicates(loose_pins), "Pins must not be duplicated");
 static_assert(!has_duplicates(sdio_pins), "SDIO pins must not be duplicated");
 static_assert(!containsAny(sdio_pins, loose_pins), "SDIO pins must not be reused");
 
+// debug pins should not be used for something else
+constexpr gpio::pin_t debug_pins[] = {
+  gpio::PA13, // JTMS / SWDIO
+  gpio::PA14, // JTCK / SWCLK
+  gpio::PA15, // JTDI
+  gpio::PB3,  // JTDO
+  gpio::PB4,  // NJTRST
+};
+
+static_assert(!containsAny(debug_pins, sdio_pins), "Debug interface pins must not be used");
+static_assert(!containsAny(debug_pins, loose_pins), "Debug interface pins must not be used");
+
+
 // SDIO pins must be valid for either 1-bit, 4-bit or 8-bit bus width
 static_assert(sdio::bus_width == 1 || sdio::bus_width == 4 || sdio::bus_width == 8, "SDIO_PINS must be valid for bus width of 1, 4 or 8 bits");
 
