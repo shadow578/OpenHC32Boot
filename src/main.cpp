@@ -65,6 +65,11 @@ int main()
       true>());
   #endif
 
+  #if ENABLE_FLASH_WRITE_PROTECTION == 1
+    // enable flash write protection
+    flash::write_protect::enable();
+  #endif
+
   // print hello message
   logging::log("OpenHC32Boot " BOOTLOADER_VERSION "\n");
   beep::beep(100);

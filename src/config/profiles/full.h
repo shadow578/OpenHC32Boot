@@ -69,6 +69,11 @@
   #define ENABLE_BOOTLOADER_PROTECTION 1
 #endif
 
+// enable write-protection of the bootloader region
+#ifndef ENABLE_FLASH_WRITE_PROTECTION
+  #define ENABLE_FLASH_WRITE_PROTECTION 1
+#endif
+
 // run full pre-jump checks
 #ifndef PRE_CHECK_LEVEL
   #define PRE_CHECK_LEVEL PRE_CHECK_FULL

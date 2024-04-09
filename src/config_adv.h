@@ -72,6 +72,11 @@
 // possible values: [ 0, 1 ]
 //define ENABLE_BOOTLOADER_PROTECTION 1
 
+// enable flash write protection for the bootloader region
+// this is recommended in place of the MPU protection, as it also protects against sector erase
+// possible values: [ 0, 1 ]
+//define ENABLE_FLASH_WRITE_PROTECTION 1
+
 // run pre-jump checks
 // possible values: [ MINIMAL, EXTENDED, FULL ]
 //define PRE_CHECK_LEVEL PRE_CHECK_FULL

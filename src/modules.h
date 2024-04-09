@@ -13,3 +13,4 @@
 #include "modules/sysclock.h"
 #include "modules/assert.h"
 #include "modules/compat.h"
+#include "modules/flash_wp.h"
