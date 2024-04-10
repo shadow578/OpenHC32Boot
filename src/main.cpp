@@ -87,12 +87,21 @@ int main()
   flash::update_metadata metadata;
   if (sd::get_update_file(file, metadata, FIRMWARE_UPDATE_FILE))
   {
-    // check if we've already flashed this firmware
-    if (metadata.matches_stored())
-    {
-      logging::log("update skipped\n");
-    }
-    else
+    // print new firmware metadata to info
+    metadata.log("update");
+
+    #if STORE_UPDATE_METADATA == 1
+      const flash::update_metadata *stored_metadata = flash::update_metadata::get_stored();
+      stored_metadata->log("flash");
+
+      // check if we've already flashed this firmware
+      if (metadata.equals(stored_metadata))
+      {
+        logging::log("update skipped\n");
+      }
+      else
+    #endif
+
     {
       // apply the update
       if(!flash::apply_firmware_update(file, APP_BASE_ADDRESS, metadata, &on_progress))

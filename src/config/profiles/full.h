@@ -49,6 +49,11 @@
   #define METADATA_HASH HASH_SHA256
 #endif
 
+// log the update metadata
+#ifndef LOG_METADATA
+  #define LOG_METADATA 1
+#endif
+
 // default to logging everything
 #ifndef LOG_LEVEL
   #define LOG_LEVEL LOG_LEVEL_DEBUG

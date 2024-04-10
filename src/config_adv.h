@@ -47,6 +47,10 @@
 // possible values: [ NONE, CRC32, SHA256 ]
 //define METADATA_HASH HASH_SHA256
 
+// log update metadata information
+// possible values: [ 0, 1 ]
+//define LOG_METADATA 1
+
 // path of the firmware update file
 //define FIRMWARE_UPDATE_FILE "firmware.bin"
 

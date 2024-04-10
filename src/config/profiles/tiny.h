@@ -26,6 +26,11 @@
   #define METADATA_HASH HASH_CRC32
 #endif
 
+// don't log the update metadata
+#ifndef LOG_METADATA
+  #define LOG_METADATA 0
+#endif
+
 // log nothing but mandatory messages
 #ifndef LOG_LEVEL
   #define LOG_LEVEL LOG_LEVEL_NONE
