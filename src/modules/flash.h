@@ -26,7 +26,7 @@ namespace flash
    * @brief get the total flash size of the MCU (including bootloader)
    * @note equal to the largest flash address + 1 
    */
-  constexpr uint32_t get_flash_size()
+  inline const uint32_t get_flash_size()
   {
     switch (chipid::variant::get_variant())
     {

@@ -79,3 +79,12 @@ static_assert(PRE_CHECK_LEVEL != PRE_CHECK_NONE, "PRE_CHECK_LEVEL should not be 
 #if COMPAT_DISABLE_DEBUG_PORT != 0
   static_assert((COMPAT_DISABLE_DEBUG_PORT & 0x1F) == COMPAT_DISABLE_DEBUG_PORT, "COMPAT_DISABLE_DEBUG_PORT must be a valid mask");
 #endif
+
+// if chipid variant override is enabled, there must be a override value
+#if defined(CHIPID_VARIANT_OVERRIDE)
+  #define HAS_CHIPID_VARIANT_OVERRIDE 1
+#else
+  #define HAS_CHIPID_VARIANT_OVERRIDE 0
+#endif
+
+static_assert(CHIPID_VARIANT_OVERRIDE_ENABLE == 0 || HAS_CHIPID_VARIANT_OVERRIDE == 1, "CHIPID_VARIANT_OVERRIDE must be defined if CHIPID_VARIANT_OVERRIDE_ENABLE is enabled");

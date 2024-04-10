@@ -7,6 +7,11 @@
 // Voxelab X2 uses DWIN screen, enable defaults
 #include "shared/dwin.h"
 
+// Voxelab V101 uses the HC32F460C variant
+#ifndef CHIPID_VARIANT_OVERRIDE
+  #define CHIPID_VARIANT_OVERRIDE chipid::variant::HC32F460C
+#endif
+
 // Serial ports
 #ifndef HOST_SERIAL_TX
   #define HOST_SERIAL_TX gpio::PA9

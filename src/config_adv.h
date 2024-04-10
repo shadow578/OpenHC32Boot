@@ -53,6 +53,14 @@
 // base address of the application
 //define APP_BASE_ADDRESS 0xC000ul
 
+// override the chip variant with CHIPID_VARIANT_OVERRIDE, disabling auto-detection
+// possible values: [ 0, 1 ]
+//define CHIPID_VARIANT_OVERRIDE_ENABLE 1
+
+// chip variant override
+// possible values: any in chipid::variant::
+//define CHIPID_VARIANT_OVERRIDE chipid::variant::HC32F460C
+
 // enable fault handler
 //define ENABLE_FAULT_HANDLER 1
 

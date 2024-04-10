@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        environment: [ "HC32F460C", "HC32F460E" ]
+        environment: [ "HC32F460" ]
         profile: [ "FULL", "TINY", "SMALL" ]
         board: [ "VOXELAB_V101" ]
 

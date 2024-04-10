@@ -17,8 +17,8 @@ namespace flash::write_protect
   {
     // according to the reference manual, section 7.6.7 "FLASH Wipe, Programming Window Protection"
     // the protection window defines the area of flash that is NOT protected, e.g. the area that can be erased or written to
-    constexpr uint32_t start_address = (APP_BASE_ADDRESS - 1) & 0x000FFFFF;
-    constexpr uint32_t end_address = (get_flash_size() - 1) & 0x000FFFFF;
+    const uint32_t start_address = (APP_BASE_ADDRESS - 1) & 0x000FFFFF;
+    const uint32_t end_address = (get_flash_size() - 1) & 0x000FFFFF;
     set_protection_window(start_address, end_address);
   }
 

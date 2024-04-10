@@ -100,6 +100,15 @@
   #warning "consider disabling __DEBUG for production"
 #endif
 
+// don't use variant auto-detection if the board defines a variant
+#ifndef CHIPID_VARIANT_OVERRIDE_ENABLE
+  #ifdef CHIPID_VARIANT_OVERRIDE
+    #define CHIPID_VARIANT_OVERRIDE_ENABLE 1
+  #else
+    #define CHIPID_VARIANT_OVERRIDE_ENABLE 0
+  #endif
+#endif
+
 // full config will take about 22KB of flash, so 
 // the app can start at 0x6000
 #ifndef APP_BASE_ADDRESS
