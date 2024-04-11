@@ -145,8 +145,8 @@ namespace flash
           #endif
 
           // print as 4 / 32 two-digit hex numbers
-          const uint8_t *hash_arr = reinterpret_cast<const uint8_t *>(&hash);
-          for (size_t i = 0; i < sizeof(hash); i++)
+          const uint32_t *hash_arr = reinterpret_cast<const uint32_t *>(&hash);
+          for (size_t i = 0; i < sizeof(hash) / 4; i++)
           {
             logging::info(hash_arr[i], 16);
             logging::info(" ");
