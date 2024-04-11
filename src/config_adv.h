@@ -38,7 +38,7 @@
 
 // delete the firmware update file after flashing?
 // possible values: [ 0, 1 ]
-//define DELETE_FIRMEWARE_UPDATE_FILE 0
+//define DELETE_FIRMWARE_UPDATE_FILE 0
 
 // store last update metadata in flash
 //define STORE_UPDATE_METADATA 1
