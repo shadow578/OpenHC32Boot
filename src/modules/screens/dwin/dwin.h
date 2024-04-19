@@ -7,6 +7,11 @@
   #define SCREEN_DIMENSIONS { 0, 0 }
 #endif
 
+/**
+ * @brief low-level screen driver for TWIN T5UIC1 (as found on Ender 3 V2 3D-Printers)
+ * implements functions according to protocol version 1.2, as that is what most screens support.
+ * see https://github.com/ihrapsa/T5UIC1-DWIN-toolset/blob/main/T5UIC1.Kernel.Application.Guide-en-v1.2.pdf
+ */
 namespace dwin
 {
   namespace constants
