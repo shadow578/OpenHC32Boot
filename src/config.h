@@ -1,12 +1,19 @@
 #pragma once
-#include "configuration.h"
-#include "boards/board.h"
+#include "config/profiles.h"
+#include "config/boards.h"
 
-#ifndef BOOTLOADER_VERSION
-#define BOOTLOADER_VERSION "none"
+// configuration profile
+// one of [ TINY, SMALL, FULL ]
+#ifndef CONFIG_PROFILE
+  #define CONFIG_PROFILE CONFIG_PROFILE_FULL
 #endif
 
-/**
- * @brief bootloader welcome message
- */
-#define BOOTLOADER_WELCOME_MESSAGE "OpenHC32Boot " BOOTLOADER_VERSION "\non " BOARD_NAME "\n\n"
+// board selection
+#ifndef BOARD
+  #define BOARD BOARD_VOXELAB_V101
+#endif
+
+// include configurations
+#include "config_adv.h"
+#include "config/profile.h"
+#include "config/board.h"
