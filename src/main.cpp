@@ -83,9 +83,8 @@ int main()
   logging::log(FIRMWARE_UPDATE_FILE);
   logging::log("\n");
   
-  FIL file;
   flash::update_metadata metadata;
-  if (sd::get_update_file(file, metadata, FIRMWARE_UPDATE_FILE))
+  if (sd::get_update_file(metadata, FIRMWARE_UPDATE_FILE))
   {
     // print new firmware metadata to info
     metadata.log("update");
@@ -104,7 +103,7 @@ int main()
 
     {
       // apply the update
-      if(!flash::apply_firmware_update(file, APP_BASE_ADDRESS, metadata, &on_progress))
+      if(!flash::apply_firmware_update(APP_BASE_ADDRESS, metadata, &on_progress))
       {
         logging::error("update failed\n");
         beep::beep(500, 999);
@@ -115,9 +114,6 @@ int main()
         logging::log("update applied\n");
       }
     }
-
-    // close the file
-    sd::close_update_file(file, FIRMWARE_UPDATE_FILE);
   }
 
   // log application jump address

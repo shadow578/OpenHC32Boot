@@ -31,11 +31,10 @@ namespace flash
 
   /**
    * @brief apply a firmware update from the given file
-   * @param file firmware binary file to read the update from
    * @param app_base_address base address to write the firmware binary file to
    * @param metadata the update metadata
    * @param progress callback function to report the update progress
    * @return true if the firmware update was successful
    */
-  bool apply_firmware_update(FIL &file, const uint32_t app_base_address, const update_metadata &metadata, const progress_callback progress);
+  bool apply_firmware_update(const uint32_t app_base_address, const update_metadata &metadata, const progress_callback progress);
 } // namespace flash
