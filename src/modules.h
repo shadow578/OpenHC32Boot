@@ -14,3 +14,4 @@
 #include "modules/assert.h"
 #include "modules/compat.h"
 #include "modules/flash_wp.h"
+#include "modules/fwid.h"

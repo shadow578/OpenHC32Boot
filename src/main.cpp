@@ -55,6 +55,10 @@ int main()
 
   screen.init();
 
+  // print firmware identification message as early as possible
+  fwid::print();
+  beep::beep(100);
+
   #if ENABLE_BOOTLOADER_PROTECTION == 1
     // initialize protection of the bootloader region
     mpu::init(true, true, false);
@@ -69,10 +73,6 @@ int main()
     // enable flash write protection
     flash::write_protect::enable();
   #endif
-
-  // print hello message
-  logging::log("OpenHC32Boot " BOOTLOADER_VERSION "\n");
-  beep::beep(100);
 
   #if PRINT_CHIPID == 1
     chipid::print();
@@ -120,10 +120,8 @@ int main()
     sd::close_update_file(file, FIRMWARE_UPDATE_FILE);
   }
 
-  // log application jump address
-  logging::log("jumping to app @ ");
-  logging::log(APP_BASE_ADDRESS, 16);
-  logging::log("\n");
+  // log application jump
+  logging::log("jumping to app\n");
 
   // run pre-checks on the application
   if (!leap::pre_check(APP_BASE_ADDRESS))
