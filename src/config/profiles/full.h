@@ -34,11 +34,6 @@
   #define FIRMWARE_UPDATE_FILE "firmware.bin"
 #endif
 
-// do delete the firmware update file after flashing it
-#ifndef DELETE_FIRMWARE_UPDATE_FILE
-  #define DELETE_FIRMWARE_UPDATE_FILE 1
-#endif
-
 // store last update metadata in flash
 #ifndef STORE_UPDATE_METADATA
   #define STORE_UPDATE_METADATA 1
@@ -87,9 +82,6 @@
 // skip nothing
 #ifndef SKIP_USART_DEINIT
   #define SKIP_USART_DEINIT 0
-#endif
-#ifndef SKIP_FILE_CLEANUP
-  #define SKIP_FILE_CLEANUP 0
 #endif
 #ifndef SKIP_CLOCK_RESTORE
   #define SKIP_CLOCK_RESTORE 0
