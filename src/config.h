@@ -4,8 +4,9 @@
 
 // configuration profile
 // one of [ TINY, SMALL, FULL ]
+// use SMALL unless you know what you're doing
 #ifndef CONFIG_PROFILE
-  #define CONFIG_PROFILE CONFIG_PROFILE_FULL
+  #define CONFIG_PROFILE CONFIG_PROFILE_SMALL
 #endif
 
 // board selection

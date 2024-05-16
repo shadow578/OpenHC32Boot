@@ -1,5 +1,6 @@
 //
-// OpenHC32Boot size-optimized feature profile, sacrificing features for size
+// OpenHC32Boot size-optimized feature profile, sacrificing features for size.
+// NOT recommended! use small instead.
 //
 #pragma once
 #include "../../config_options.h"

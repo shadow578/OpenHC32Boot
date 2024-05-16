@@ -1,5 +1,6 @@
 //
-// OpenHC32Boot full feature profile
+// OpenHC32Boot full feature profile.
+// NOT recommended for production use, as it mostly includes debugging features.
 //
 #pragma once
 #include "../../config_options.h"
