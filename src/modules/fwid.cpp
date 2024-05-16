@@ -18,5 +18,6 @@
 void fwid::print()
 {
   // "OpenHC32Boot A:[APP_BASE_ADDRESS] V:[VERSION] ", eg.: "OpenHC32Boot A:0x4000 V:1.0.0 "
+  // Note: the 'check_fwid.py' script depends on this format, so it must be updated if this is changed
   logging::log("OpenHC32Boot A:" APP_BASE_ADDRESS_STR " V:" BOOTLOADER_VERSION "\n");
 }
