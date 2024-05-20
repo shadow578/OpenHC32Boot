@@ -47,8 +47,8 @@
 // possible values: [ 0, 1 ]
 //define LOG_METADATA 1
 
-// path of the firmware update file
-//define FIRMWARE_UPDATE_FILE "firmware.bin"
+// path of the firmware update file. must be all uppercase
+//define FIRMWARE_UPDATE_FILE "FIRMWARE.BIN"
 
 // base address of the application
 //define APP_BASE_ADDRESS 0xC000ul

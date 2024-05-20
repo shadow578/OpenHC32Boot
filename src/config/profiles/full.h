@@ -30,9 +30,9 @@
 #endif
 
 // default to a firmware file located at the root of the SD card 
-// and named firmware.bin
+// and named FIRMWARE.BIN
 #ifndef FIRMWARE_UPDATE_FILE
-  #define FIRMWARE_UPDATE_FILE "firmware.bin"
+  #define FIRMWARE_UPDATE_FILE "FIRMWARE.BIN"
 #endif
 
 // store last update metadata in flash
