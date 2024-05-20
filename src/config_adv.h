@@ -36,10 +36,6 @@
 // one of [ 1, 2 ]
 //define SDIO_PERIPHERAL 1
 
-// delete the firmware update file after flashing?
-// possible values: [ 0, 1 ]
-//define DELETE_FIRMWARE_UPDATE_FILE 0
-
 // store last update metadata in flash
 //define STORE_UPDATE_METADATA 1
 
@@ -51,8 +47,8 @@
 // possible values: [ 0, 1 ]
 //define LOG_METADATA 1
 
-// path of the firmware update file
-//define FIRMWARE_UPDATE_FILE "firmware.bin"
+// path of the firmware update file. must be all uppercase
+//define FIRMWARE_UPDATE_FILE "FIRMWARE.BIN"
 
 // base address of the application
 //define APP_BASE_ADDRESS 0xC000ul
@@ -96,12 +92,6 @@
 // skip deinitialization of the USART peripheral on boot and before jumping to the application
 // may cause issues with the application, so enable with caution
 //define SKIP_USART_DEINIT 0
-
-// skip calls to f_close and f_unmount for files.
-// - in read-only mode, this should be safe, but still may cause issues
-// - in read-write mode, this may changes to files to not be saved
-// enable with caution
-//define SKIP_FILE_CLEANUP 0
 
 // skip restoring the clock configuration before jumping to the application
 //define SKIP_CLOCK_RESTORE 0

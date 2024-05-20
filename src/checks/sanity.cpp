@@ -69,9 +69,6 @@ static_assert(!containsAny(debug_pins, loose_pins), "Debug interface pins must n
 // SDIO pins must be valid for either 1-bit, 4-bit or 8-bit bus width
 static_assert(sdio::bus_width == 1 || sdio::bus_width == 4 || sdio::bus_width == 8, "SDIO_PINS must be valid for bus width of 1, 4 or 8 bits");
 
-// SKIP_FILE_CLEANUP is only allowed enabled if DELETE_FIRMWARE_UPDATE_FILE is disabled
-static_assert(!(SKIP_FILE_CLEANUP == 1 && DELETE_FIRMWARE_UPDATE_FILE == 1), "SKIP_FILE_CLEANUP will cause DELETE_FIRMWARE_UPDATE_FILE to fail. Disable one of them.");
-
 // pre-checks should not be disabled completely without annoying the user
 static_assert(PRE_CHECK_LEVEL != PRE_CHECK_NONE, "PRE_CHECK_LEVEL should not be disabled completely");
 
@@ -88,3 +85,11 @@ static_assert(PRE_CHECK_LEVEL != PRE_CHECK_NONE, "PRE_CHECK_LEVEL should not be 
 #endif
 
 static_assert(CHIPID_VARIANT_OVERRIDE_ENABLE == 0 || HAS_CHIPID_VARIANT_OVERRIDE == 1, "CHIPID_VARIANT_OVERRIDE must be defined if CHIPID_VARIANT_OVERRIDE_ENABLE is enabled");
+
+#if defined(DELETE_FIRMWARE_UPDATE_FILE)
+  #error "DELETE_FIRMWARE_UPDATE_FILE is no longer supported! Please remove it from the configuration."
+#endif
+
+#if defined(SKIP_FILE_CLEANUP)
+  #error "SKIP_FILE_CLEANUP is no longer supported! Please remove it from the configuration."
+#endif

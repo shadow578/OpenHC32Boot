@@ -11,10 +11,10 @@ namespace sd
    */
   FATFS fs;
 
-  bool get_metadata(FIL *file, flash::update_metadata &metadata)
+  bool get_metadata(flash::update_metadata &metadata)
   {
     // get file size
-    metadata.app_size = f_size(file);
+    metadata.app_size = fs.fsize;
 
     #if HAS_METADATA_HASH
       // start hash session
@@ -31,7 +31,7 @@ namespace sd
       {
         // read the next block
         UINT bytes_read = 0;
-        const FRESULT res = f_read(file, buffer, buffer_size, &bytes_read);
+        const FRESULT res = pf_read(buffer, buffer_size, &bytes_read);
         if (res != FR_OK)
         {
           logging::error("f_read() err=");
@@ -65,10 +65,10 @@ namespace sd
     return true;
   }
 
-  bool get_update_file(FIL &file, flash::update_metadata &metadata, const char *path)
+  bool get_update_file(flash::update_metadata &metadata, const char *path)
   {
     // mount the file system
-    FRESULT res = f_mount(&fs, "", /* mount now */ 1);
+    FRESULT res = pf_mount(&fs);
     if (res != FR_OK)
     {
       logging::error("f_mount() err=");
@@ -81,7 +81,7 @@ namespace sd
     for(;;)
     {
       // try to open the file
-      res = f_open(&file, path, FA_READ);
+      res = pf_open(path);
       if (res != FR_OK)
       {
         logging::error("f_open() err=");
@@ -92,7 +92,7 @@ namespace sd
 
       // assume everything is ok
       // if the file is more than 0 bytes
-      const DWORD file_size = f_size(&file);
+      const DWORD file_size = fs.fsize;
       if (file_size == 0)
       {
         return false;
@@ -101,19 +101,14 @@ namespace sd
       // get metadata
       if (!read_metadata)
       {
-        if (!get_metadata(&file, metadata)) 
+        if (!get_metadata(metadata)) 
         {
           return false;
         }
         
         #if HAS_METADATA_HASH
           // open file again, but don't read metadata
-          // this is (more or less) equal to f_rewind(), but 
-          // with reduced memory usage
-          #if SKIP_FILE_CLEANUP != 1
-            f_close(&file);
-          #endif
-
+          // this is equal to rewind the file, but uses less flash
           read_metadata = true;
           continue;
         #endif
@@ -124,44 +119,5 @@ namespace sd
       // the file size didn't change
       return metadata.app_size == file_size;
     }
-  }
-
-  void close_update_file(FIL &file, const char *path)
-  {
-    #if SKIP_FILE_CLEANUP != 1
-      // close the file
-      FRESULT res = f_close(&file);
-      if (res != FR_OK)
-      {
-        logging::error("f_close() err=");
-        logging::error(res, 10);
-        logging::error("\n");
-  
-        // don't care for error here
-      }
-  
-      #if DELETE_FIRMWARE_UPDATE_FILE == 1
-        res = f_unlink(path);
-        if (res != FR_OK)
-        {
-          logging::error("f_unlink() err=");
-          logging::error(res, 10);
-          logging::error("\n");
-  
-          // don't care for error here
-        }
-      #endif
-  
-      // unmount the file system
-      res = f_unmount("");
-      if (res != FR_OK)
-      {
-        logging::error("f_unmount() err=");
-        logging::error(res, 10);
-        logging::error("\n");
-  
-        // don't care for error here
-      }
-    #endif // SKIP_FILE_CLEANUP != 1
   }
 } // namespace sd

@@ -112,14 +112,13 @@ namespace flash
 
   /**
    * @brief write the firmware update to the flash
-   * @param file firmware binary file to read the update from
    * @param start the start address to write the update to
    * @param end the end address to write the update to
    * @param progress callback function to report the write progress
    * @return true if the write was successful
    * @note assumes the flash is unlocked
    */
-  bool write_file(FIL *file, const uint32_t start, const uint32_t end, const progress_callback progress)
+  bool write_file(const uint32_t start, const uint32_t end, const progress_callback progress)
   {
     const DWORD total_bytes = end - start;
     bool did_pad = false;
@@ -127,7 +126,7 @@ namespace flash
     {
       // read the next block
       UINT bytes_read = 0;
-      const FRESULT res = f_read(file, buffer, file_buffer_size, &bytes_read);
+      const FRESULT res = pf_read(buffer, file_buffer_size, &bytes_read);
       if (res != FR_OK)
       {
         logging::error("f_read() err=");
@@ -179,7 +178,7 @@ namespace flash
     return true;
   }
 
-  bool apply_firmware_update(FIL &file, const uint32_t app_base_address, const update_metadata &metadata, const progress_callback progress)
+  bool apply_firmware_update(const uint32_t app_base_address, const update_metadata &metadata, const progress_callback progress)
   {
     // calculate end addresses
     const uint32_t program_end_address = app_base_address + metadata.app_size;
@@ -227,7 +226,7 @@ namespace flash
     #endif
 
     // write the firmware update to the flash
-    if (!write_file(&file, app_base_address, program_end_address, progress))
+    if (!write_file(app_base_address, program_end_address, progress))
     {
       logging::error("write app failed\n");
       success = false;

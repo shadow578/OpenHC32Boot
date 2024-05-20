@@ -1,5 +1,6 @@
 //
-// OpenHC32Boot size-optimized feature profile, sacrificing features for size
+// OpenHC32Boot size-optimized feature profile, sacrificing features for size.
+// NOT recommended! use small instead.
 //
 #pragma once
 #include "../../config_options.h"
@@ -11,12 +12,6 @@
 #endif
 
 #include "../board.h"
-
-// don't delete the firmware update file after flashing it
-// this way, fatfs compiles in read-only mode
-#ifndef DELETE_FIRMWARE_UPDATE_FILE
-  #define DELETE_FIRMWARE_UPDATE_FILE 0
-#endif
 
 // use CRC32 for metadata hash
 // CRC32 driver is smaller than the SHA256 one
@@ -65,9 +60,6 @@
 // enable all space-saving skips
 #ifndef SKIP_USART_DEINIT
   #define SKIP_USART_DEINIT 1
-#endif
-#ifndef SKIP_FILE_CLEANUP
-  #define SKIP_FILE_CLEANUP 1
 #endif
 #ifndef SKIP_CLOCK_RESTORE
   #define SKIP_CLOCK_RESTORE 1

@@ -1,5 +1,6 @@
 //
-// OpenHC32Boot full feature profile
+// OpenHC32Boot full feature profile.
+// NOT recommended for production use, as it mostly includes debugging features.
 //
 #pragma once
 #include "../../config_options.h"
@@ -29,14 +30,9 @@
 #endif
 
 // default to a firmware file located at the root of the SD card 
-// and named firmware.bin
+// and named FIRMWARE.BIN
 #ifndef FIRMWARE_UPDATE_FILE
-  #define FIRMWARE_UPDATE_FILE "firmware.bin"
-#endif
-
-// do delete the firmware update file after flashing it
-#ifndef DELETE_FIRMWARE_UPDATE_FILE
-  #define DELETE_FIRMWARE_UPDATE_FILE 1
+  #define FIRMWARE_UPDATE_FILE "FIRMWARE.BIN"
 #endif
 
 // store last update metadata in flash
@@ -87,9 +83,6 @@
 // skip nothing
 #ifndef SKIP_USART_DEINIT
   #define SKIP_USART_DEINIT 0
-#endif
-#ifndef SKIP_FILE_CLEANUP
-  #define SKIP_FILE_CLEANUP 0
 #endif
 #ifndef SKIP_CLOCK_RESTORE
   #define SKIP_CLOCK_RESTORE 0

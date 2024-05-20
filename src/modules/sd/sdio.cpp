@@ -2,8 +2,16 @@
 #include "../log.h"
 #include <sd_card.h>
 
-#include "fatfs/ff.h"
-#include "fatfs/diskio.h"
+#include "../assert.h"
+
+#include <source/diskio.h>
+
+#if PF_USE_WRITE
+  #error "FatFS write is not supported!"
+#endif
+
+constexpr size_t SD_BLOCK_SIZE = 512;
+constexpr DWORD LSECTOR_INVALID = 0xFFFFFFFF;
 
 #define SDIO_UNIT CONCAT(M4_SDIOC, SDIO_PERIPHERAL);
 
@@ -33,10 +41,9 @@ stc_sd_handle_t *handle = nullptr;
 
 /**
  * @brief initialize drive
- * @param pdrv drive number to identify the drive
- * @return status. byte with one or more of [STA_NOINIT, STA_NODISK, STA_PROTECT] set
+ * @return status. byte with one or more of [STA_NOINIT, STA_NODISK] set
  */
-extern "C" DSTATUS disk_initialize(BYTE pdrv)
+extern "C" DSTATUS disk_initialize(void)
 {
   // set CLK pin to medium drive strength
   // stc_port_init_t clockPinInit = {
@@ -111,7 +118,7 @@ extern "C" DSTATUS disk_initialize(BYTE pdrv)
     logging::debug("SDIO_GetCardCSD() rc=");
     logging::debug(rc, 10);
     logging::debug("\n");
-    return STA_NOINIT;
+    return STA_NODISK;
   }
 
   // everything is OK
@@ -119,149 +126,60 @@ extern "C" DSTATUS disk_initialize(BYTE pdrv)
 }
 
 /**
- * @brief get drive status
- * @param pdrv drive number to identify the drive
- * @return status. byte with one or more of [STA_NOINIT, STA_NODISK, STA_PROTECT] set
- */
-extern "C" DSTATUS disk_status(BYTE pdrv)
-{
-  if (handle == nullptr)
-  {
-    // not initialized
-    return STA_NOINIT;
-  }
-
-  if (handle->stcCardStatus.CARD_IS_LOCKED)
-  {
-    // card is locked
-    return STA_PROTECT;
-  }
-
-  if (handle->stcCardStatus.READY_FOR_DATA)
-  {
-    // card is ready
-    return 0;
-  }
-
-  // card is not ready
-  return STA_NOINIT;
-}
-
-/**
- * @brief read sectors
- * @param pdrv drive number to identify the drive
+ * @brief read partial sector
  * @param buff pointer to the data buffer to store read data
- * @param sector start sector number to read
- * @param count number of sectors to read
- * @return status. one of [RES_OK, RES_ERROR, RES_WRPRT, RES_NOTRDY, RES_PARERR]
+ * @param sector sector number to read
+ * @param offset offset in the sector
+ * @param count byte count
+ * @return status. one of [RES_OK, RES_ERROR, RES_NOTRDY, RES_PARERR]
  */
-extern "C" DRESULT disk_read(BYTE pdrv, BYTE *buff, LBA_t sector, UINT count)
+extern "C" DRESULT disk_readp(BYTE *buff, DWORD sector, UINT offset, UINT count)
 {
+  static BYTE block_buffer[SD_BLOCK_SIZE];
+  static DWORD last_sector = LSECTOR_INVALID;
+
+  // if either offset or count is larger than the block buffer, we have a problem.
+  // since we first read into the block buffer, we can't read more than that.
+  ASSERT(offset < SD_BLOCK_SIZE, "offset >= SD_BLOCK_SIZE");
+  ASSERT(count <= SD_BLOCK_SIZE, "count > SD_BLOCK_SIZE");
+
   // check if handle is initialized
   if (handle == nullptr)
   {
     return RES_NOTRDY;
   }
 
-  // read sectors
-  en_result_t rc = SDCARD_ReadBlocks(handle, sector, count, buff, sdio::read_timeout);
-  if (rc != Ok)
+  // read 1 full block / sector if different from last read
+  // Petit FatFS wants to read partial sectors, but the DDL only allows reading full ones.
+  // So we read the full sector and then copy "chunks" to FatFS's buffer.
+  // Since FatFS may request the same (partial) sector multiple times, we cache the full sector buffer and 
+  // use the cache if the sector matches.
+  logging::debug("read sector ");
+  logging::debug(sector, 10);
+  if (sector != last_sector)
   {
-    logging::debug("SDCARD_ReadBlocks() rc=");
-    logging::debug(rc, 10);
-    logging::debug(" err=");
-    logging::debug(handle->u32ErrorCode, 10);
-    logging::debug(" @ ");
-    logging::debug(sector, 10);
-    logging::debug("\n");
-    return RES_ERROR;
-  }
+    logging::debug(" from DISK\n");
 
-  return RES_OK;
-}
-
-#if FF_FS_READONLY == 0
-
-/**
- * @brief write sectors
- * @param pdrv drive number to identify the drive
- * @param buff data to write
- * @param sector start sector number to write
- * @param count number of sectors to write
- * @return status. one of [RES_OK, RES_ERROR, RES_WRPRT, RES_NOTRDY, RES_PARERR]
- */
-extern "C" DRESULT disk_write(BYTE pdrv, const BYTE *buff, LBA_t sector, UINT count)
-{
-  // check if handle is initialized
-  if (handle == nullptr)
-  {
-    return RES_NOTRDY;
-  }
-
-  // write sectors
-  en_result_t rc = SDCARD_WriteBlocks(handle, sector, count, const_cast<uint8_t *>(buff), sdio::write_timeout);
-  if (rc == Ok)
-  {
-    return RES_OK;
+    en_result_t rc = SDCARD_ReadBlocks(handle, sector, 1, block_buffer, sdio::read_timeout);
+    if (rc != Ok)
+    {
+      logging::debug("SDCARD_ReadBlocks() rc=");
+      logging::debug(rc, 10);
+      logging::debug(" err=");
+      logging::debug(handle->u32ErrorCode, 10);
+      logging::debug(" @ ");
+      logging::debug(sector, 10);
+      logging::debug("\n");
+      return RES_ERROR;
+    }
   }
   else
   {
-    logging::debug("SDCARD_WriteBlocks() rc=");
-    logging::debug(rc, 10);
-    logging::debug(" err=");
-    logging::debug(handle->u32ErrorCode, 10);
-    logging::debug(" @ ");
-    logging::debug(sector, 10);
-    logging::debug("\n");
-    return RES_ERROR;
+    // read from cache
+    logging::debug(" from CACHE\n");
   }
-}
 
-#endif // FF_FS_READONLY == 0
-
-
-/**
- * @brief ioctl function
- * @param pdrv drive number to identify the drive
- * @param cmd control command code
- * @param buff pointer to the control data. read/write depends on the command code
- * @return status. one of [RES_OK, RES_ERROR, RES_WRPRT, RES_NOTRDY, RES_PARERR]
- */
-extern "C" DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buff)
-{
-  // ensure handle is initialized
-  if (handle == nullptr)
-  {
-    return RES_NOTRDY;
-  } 
-
-  switch (cmd)
-  {
-  case CTRL_SYNC:
-    // wait for card to be ready again
-    while (!handle->stcCardStatus.READY_FOR_DATA) { /* nada */ }
-    return RES_OK;
-  case GET_SECTOR_COUNT:
-    // get sector count
-    // in DDL, they are called "blocks"
-    *(reinterpret_cast<LBA_t*>(buff)) = handle->stcSdCardInfo.u32LogBlockNbr;
-    return RES_OK;
-  case GET_SECTOR_SIZE:
-    // get sector size
-    *(reinterpret_cast<WORD*>(buff)) = handle->stcSdCardInfo.u32LogBlockSize;
-    return RES_OK;
-  //case GET_BLOCK_SIZE:
-  //  // get block size
-  //  *(DWORD *)buff = 1;
-  //  return RES_OK;
-  //case CTRL_TRIM:
-  //  // trim
-  //  return RES_OK;
-  default:
-    // unknown command
-    logging::debug("unknown ioctl command ");
-    logging::debug(cmd, 10);
-    logging::debug("\n");
-    return RES_PARERR;
-  }
+  // copy bytes from block SDIO buffer to FatFS buffer
+  memcpy(buff, block_buffer + offset, count);
+  return RES_OK;
 }
